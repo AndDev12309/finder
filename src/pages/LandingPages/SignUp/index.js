@@ -64,7 +64,7 @@ function SignUpBasic() {
         setCurrentUser(response.data.user);
         setAuthenticated(true);
         setLoading(false);
-        navigate("/presentation");
+        navigate("/pets");
       }
     } catch (e) {
       setAuthenticated(false);
@@ -83,7 +83,7 @@ function SignUpBasic() {
         routes={routesPublic}
         action={{
           type: "internal",
-          route: "/pages/authentication/sign-in",
+          route: "/sign-in",
           label: "Iniciar Sesion",
           color: "info",
         }}
@@ -125,7 +125,7 @@ function SignUpBasic() {
                 textAlign="center"
               >
                 <MKTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-                  Sign up
+                  Registrarse
                 </MKTypography>
                 <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
                   <Grid item xs={2}>
@@ -197,13 +197,13 @@ function SignUpBasic() {
                       Ya tienes una cuenta?{" "}
                       <MKTypography
                         component={Link}
-                        to="/pages/authentication/sign-in"
+                        to="/sign-in"
                         variant="button"
                         color="info"
                         fontWeight="medium"
                         textGradient
                       >
-                        Ingresa
+                        Ingresar
                       </MKTypography>
                     </MKTypography>
                   </MKBox>

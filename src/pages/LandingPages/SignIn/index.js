@@ -58,7 +58,7 @@ function SignInBasic() {
       setCurrentUser(response.data.cliente);
       setAuthenticated(true);
       setLoading(false);
-      navigate("/presentation");
+      navigate("/pets");
     } catch (e) {
       setAuthenticated(false);
       if (e.status === 401) {
@@ -78,7 +78,7 @@ function SignInBasic() {
         routes={routesPublic}
         action={{
           type: "internal",
-          route: "/pages/authentication/sign-up",
+          route: "/sign-up",
           label: "Registrarse",
           color: "info",
         }}
@@ -182,7 +182,7 @@ function SignInBasic() {
                       No tienes una cuenta?{" "}
                       <MKTypography
                         component={Link}
-                        to="/pages/authentication/sign-up"
+                        to="/sign-up"
                         variant="button"
                         color="info"
                         fontWeight="medium"

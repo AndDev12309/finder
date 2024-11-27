@@ -1,5 +1,5 @@
 const publicRoutes = {
-  LOGIN: "/pages/authentication/sign-in",
+  LOGIN: "/sign-in",
   REGISTER: "/registro",
   ARTICLES: "/articulos",
   USERS: "/usuarios",

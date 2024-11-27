@@ -8,7 +8,7 @@ import Icon from "@mui/material/Icon";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
-function RotatingCardFront({ color, image, icon, title, description }) {
+function RotatingCardFront({ color, image, icon, title, description, colorTitle }) {
   return (
     <MKBox
       display="flex"
@@ -22,8 +22,8 @@ function RotatingCardFront({ color, image, icon, title, description }) {
       sx={{
         backgroundImage: ({ palette: { gradients }, functions: { linearGradient, rgba } }) =>
           `${linearGradient(
-            rgba(gradients[color] ? gradients[color].main : gradients.info.main, 0.25),
-            rgba(gradients[color] ? gradients[color].main : gradients.info.main, 0.25)
+            rgba(gradients[color] ? gradients[color].main : gradients.info.main, 0.5),
+            rgba(gradients[color] ? gradients[color].main : gradients.info.main, 0.5)
           )}, url(${image})`,
         backgroundSize: "cover",
         backfaceVisibility: "hidden",
@@ -35,10 +35,10 @@ function RotatingCardFront({ color, image, icon, title, description }) {
             {typeof icon === "string" ? <Icon>{icon}</Icon> : icon}
           </MKTypography>
         )}
-        <MKTypography variant="h3" color="white" gutterBottom>
+        <MKTypography variant="h3" color={colorTitle} gutterBottom>
           {title}
         </MKTypography>
-        <MKTypography variant="body2" color="white" opacity={0.8}>
+        <MKTypography variant="body2" color="white" opacity={1}>
           {description}
         </MKTypography>
       </MKBox>
@@ -50,11 +50,22 @@ function RotatingCardFront({ color, image, icon, title, description }) {
 RotatingCardFront.defaultProps = {
   color: "info",
   icon: "",
+  colorTitle: "white",
 };
 
 // Typechecking props for the RotatingCardFront
 RotatingCardFront.propTypes = {
   color: PropTypes.oneOf([
+    "primary",
+    "secondary",
+    "info",
+    "success",
+    "warning",
+    "error",
+    "dark",
+    "light",
+  ]),
+  colorTitle: PropTypes.oneOf([
     "primary",
     "secondary",
     "info",

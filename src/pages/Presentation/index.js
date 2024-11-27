@@ -25,7 +25,10 @@ import footerRoutes from "footer.routes";
 
 // Images
 import { CircularProgress, InputAdornment, TextField } from "@mui/material";
-import bgImage from "assets/images/bg-presentation.jpg";
+import helpImg from "assets/images/helpFind.jpeg";
+import huellasImge from "assets/images/huellasPets.jpeg";
+import lostImge from "assets/images/lostPet.jpeg";
+
 import { useFounds } from "data/useFounds";
 import { useLosts } from "data/useLosts";
 import { useEffect, useState } from "react";
@@ -34,6 +37,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import { useAuth } from "providers/Auth";
 import { routesPublic } from "routes";
+import Header from "./sections/Header";
+import { routesPrivate } from "routes";
 
 function Presentation() {
   const autenticate = useAuth();
@@ -171,10 +176,10 @@ function Presentation() {
     <>
       {autenticate.isAuthenticated ? (
         <DefaultNavbar
-          routes={routesPublic}
+          routes={routesPrivate}
           action={{
             type: "internal",
-            route: "/pages/authentication/logout",
+            route: "/logout",
             label: "Cerrar Sesion",
             color: "info",
           }}
@@ -185,7 +190,7 @@ function Presentation() {
           routes={routesPublic}
           action={{
             type: "internal",
-            route: "/pages/authentication/sign-in",
+            route: "/sign-in",
             label: "Iniciar Sesion",
             color: "info",
           }}
@@ -196,7 +201,7 @@ function Presentation() {
         minHeight="75vh"
         width="100%"
         sx={{
-          backgroundImage: `url(${bgImage})`,
+          backgroundImage: `url(${huellasImge})`,
           backgroundSize: "cover",
           backgroundPosition: "top",
           display: "grid",
@@ -204,30 +209,29 @@ function Presentation() {
         }}
       >
         <Container>
-          <Grid container item xs={12} lg={7} justifyContent="center" mx="auto">
-            <MKTypography
-              variant="h1"
-              color="white"
-              mt={-6}
-              mb={1}
-              sx={({ breakpoints, typography: { size } }) => ({
-                [breakpoints.down("md")]: {
-                  fontSize: size["3xl"],
-                },
-              })}
-            >
-              Material Kit 2 React{" "}
-            </MKTypography>
-            <MKTypography
-              variant="body1"
-              color="white"
-              textAlign="center"
-              px={{ xs: 6, lg: 12 }}
-              mt={1}
-            >
-              Free & Open Source Web UI Kit built over ReactJS &amp; MUI. Join over 1.6 million
-              developers around the world.
-            </MKTypography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} lg={6} justifyContent="center" mx="auto">
+              <Header
+                frontImage={lostImge}
+                title="¿Perdiste a tu mascota?"
+                description="No te rindas, cada publicación acerca más a tu mascota de vuelta a casa. ¡Haz que más personas puedan verla y ayudarte!"
+                borderColor="#0000FF"
+                buttonColor="#FF00FF"
+                label="QUIERO AYUDA"
+                ruta="/publish-lost"
+              />
+            </Grid>
+            <Grid item xs={12} lg={6} justifyContent="center" mx="auto">
+              <Header
+                frontImage={helpImg}
+                title="¿Encontraste una mascota?"
+                description="Tu gesto puede marcar la diferencia. Publicar a esta mascota encontrada es el primer paso para reunirla con su familia."
+                borderColor="#0000FF"
+                buttonColor="#FF00FF"
+                label="QUIERO AYUDAR"
+                ruta="/publish-found"
+              />
+            </Grid>
           </Grid>
         </Container>
       </MKBox>
