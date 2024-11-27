@@ -7,9 +7,9 @@ import Grid from "@mui/material/Grid";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
-// Material Kit 2 React examples
-import DefaultFooter from "examples/Footers/DefaultFooter";
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
+// Material Kit 2 React layouts/hared
+import DefaultFooter from "layouts/hared/Footers/DefaultFooter";
+import DefaultNavbar from "layouts/hared/Navbars/DefaultNavbar";
 
 // Presentation page sections
 import Counters from "pages/Presentation/sections/Counters";

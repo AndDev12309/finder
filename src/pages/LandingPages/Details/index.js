@@ -2,7 +2,7 @@ import { Box, Card, CardContent, Container, Grid, Typography } from "@mui/materi
 import huellasImge from "assets/images/huellasPets.jpeg";
 import MKBox from "components/MKBox";
 import MKButton from "components/MKButton";
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
+import DefaultNavbar from "layouts/hared/Navbars/DefaultNavbar";
 import Contact from "pages/LandingPages/Details/Contact";
 import PropTypes from "prop-types";
 import { useState } from "react";

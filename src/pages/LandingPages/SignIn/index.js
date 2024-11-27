@@ -21,8 +21,8 @@ import MKInput from "components/MKInput";
 import MKTypography from "components/MKTypography";
 
 //   example components
-import SimpleFooter from "examples/Footers/SimpleFooter";
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
+import SimpleFooter from "layouts/hared/Footers/SimpleFooter";
+import DefaultNavbar from "layouts/hared/Navbars/DefaultNavbar";
 
 // Images
 import bgImage from "assets/images/bgLogin.jpg";
