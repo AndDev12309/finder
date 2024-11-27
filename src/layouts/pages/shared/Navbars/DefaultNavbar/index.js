@@ -21,8 +21,8 @@ import MKTypography from "components/MKTypography";
 import MKButton from "components/MKButton";
 
 // Material Kit 2 React example components
-import DefaultNavbarDropdown from "layouts/hared/Navbars/DefaultNavbar/DefaultNavbarDropdown";
-import DefaultNavbarMobile from "layouts/hared/Navbars/DefaultNavbar/DefaultNavbarMobile";
+import DefaultNavbarDropdown from "layouts/pages/shared/Navbars/DefaultNavbar/DefaultNavbarDropdown";
+import DefaultNavbarMobile from "layouts/pages/shared/Navbars/DefaultNavbar/DefaultNavbarMobile";
 
 // Material Kit 2 React base styles
 import breakpoints from "assets/theme/base/breakpoints";

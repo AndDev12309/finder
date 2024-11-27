@@ -18,8 +18,8 @@ import MKInput from "components/MKInput";
 import MKTypography from "components/MKTypography";
 
 // Material Kit 2 React example components
-import SimpleFooter from "layouts/hared/Footers/SimpleFooter";
-import DefaultNavbar from "layouts/hared/Navbars/DefaultNavbar";
+import SimpleFooter from "layouts/pages/shared/Footers/SimpleFooter";
+import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
 
 // Material Kit 2 React page layout routes
 

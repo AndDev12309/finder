@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
-import RotatingCard from "layouts/hared/Cards/RotatingCard";
-import RotatingCardBack from "layouts/hared/Cards/RotatingCard/RotatingCardBack";
-import RotatingCardFront from "layouts/hared/Cards/RotatingCard/RotatingCardFront";
+import RotatingCard from "layouts/pages/shared/Cards/RotatingCard";
+import RotatingCardBack from "layouts/pages/shared/Cards/RotatingCard/RotatingCardBack";
+import RotatingCardFront from "layouts/pages/shared/Cards/RotatingCard/RotatingCardFront";
 import PropTypes from "prop-types";
 
 export default function Header({ frontImage, title, description, borderColor, label, ruta }) {

@@ -8,9 +8,9 @@ import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import MKButton from "components/MKButton";
 
-// Material Kit 2 React layouts/hared
-import DefaultNavbar from "layouts/hared/Navbars/DefaultNavbar";
-import DefaultFooter from "layouts/hared/Footers/DefaultFooter";
+// Material Kit 2 React layouts/pages/shared
+import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
+import DefaultFooter from "layouts/pages/shared/Footers/DefaultFooter";
 
 // About Us page sections
 import Information from "pages/LandingPages/AboutUs/sections/Information";

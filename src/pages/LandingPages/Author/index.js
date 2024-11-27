@@ -6,8 +6,8 @@ import Card from "@mui/material/Card";
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
 
-// Material Kit 2 React layouts/hared
-import DefaultNavbar from "layouts/hared/Navbars/DefaultNavbar";
+// Material Kit 2 React layouts/pages/shared
+import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
 
 // Author page sections
 import Profile from "pages/LandingPages/Author/sections/Profile";

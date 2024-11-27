@@ -8,8 +8,8 @@ import Grid from "@mui/material/Grid";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
-// Material Kit 2 React layouts/hared
-import HorizontalTeamCard from "layouts/hared/Cards/TeamCards/HorizontalTeamCard";
+// Material Kit 2 React layouts/pages/shared
+import HorizontalTeamCard from "layouts/pages/shared/Cards/TeamCards/HorizontalTeamCard";
 
 // Images
 import team1 from "assets/images/team-5.jpg";

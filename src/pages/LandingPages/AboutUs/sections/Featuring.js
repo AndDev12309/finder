@@ -7,8 +7,8 @@ import Grid from "@mui/material/Grid";
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
 
-// Material Kit 2 React layouts/hared
-import DefaultCounterCard from "layouts/hared/Cards/CounterCards/DefaultCounterCard";
+// Material Kit 2 React layouts/pages/shared
+import DefaultCounterCard from "layouts/pages/shared/Cards/CounterCards/DefaultCounterCard";
 
 // Images
 import coinbase from "assets/images/logos/gray-logos/logo-coinbase.svg";

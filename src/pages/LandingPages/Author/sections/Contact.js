@@ -11,7 +11,7 @@ import MKButton from "components/MKButton";
 import MKTypography from "components/MKTypography";
 
 // Images
-import bgImage from "assets/images/layouts/hared/blog2.jpg";
+import bgImage from "assets/images/layouts/pages/shared/blog2.jpg";
 
 function Contact() {
   return (

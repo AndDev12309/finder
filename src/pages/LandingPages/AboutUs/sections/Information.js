@@ -7,9 +7,9 @@ import Grid from "@mui/material/Grid";
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
 
-// Material Kit 2 React layouts/hared
-import DefaultInfoCard from "layouts/hared/Cards/InfoCards/DefaultInfoCard";
-import CenteredBlogCard from "layouts/hared/Cards/BlogCards/CenteredBlogCard";
+// Material Kit 2 React layouts/pages/shared
+import DefaultInfoCard from "layouts/pages/shared/Cards/InfoCards/DefaultInfoCard";
+import CenteredBlogCard from "layouts/pages/shared/Cards/BlogCards/CenteredBlogCard";
 
 function Information() {
   return (

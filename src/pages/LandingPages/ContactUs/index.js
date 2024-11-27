@@ -9,9 +9,9 @@ import MKInput from "components/MKInput";
 import MKButton from "components/MKButton";
 import MKTypography from "components/MKTypography";
 
-// Material Kit 2 React layouts/hared
-import DefaultNavbar from "layouts/hared/Navbars/DefaultNavbar";
-import DefaultFooter from "layouts/hared/Footers/DefaultFooter";
+// Material Kit 2 React layouts/pages/shared
+import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
+import DefaultFooter from "layouts/pages/shared/Footers/DefaultFooter";
 
 // Routes
 import routes from "routes";

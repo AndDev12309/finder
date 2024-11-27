@@ -9,14 +9,14 @@ import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
 // Material Kit 2 React components
-import TransparentBlogCard from "layouts/hared/Cards/BlogCards/TransparentBlogCard";
-import BackgroundBlogCard from "layouts/hared/Cards/BlogCards/BackgroundBlogCard";
+import TransparentBlogCard from "layouts/pages/shared/Cards/BlogCards/TransparentBlogCard";
+import BackgroundBlogCard from "layouts/pages/shared/Cards/BlogCards/BackgroundBlogCard";
 
 // Images
-import post1 from "assets/images/layouts/hared/testimonial-6-2.jpg";
-import post2 from "assets/images/layouts/hared/testimonial-6-3.jpg";
-import post3 from "assets/images/layouts/hared/blog-9-4.jpg";
-import post4 from "assets/images/layouts/hared/blog2.jpg";
+import post1 from "assets/images/layouts/pages/shared/testimonial-6-2.jpg";
+import post2 from "assets/images/layouts/pages/shared/testimonial-6-3.jpg";
+import post3 from "assets/images/layouts/pages/shared/blog-9-4.jpg";
+import post4 from "assets/images/layouts/pages/shared/blog2.jpg";
 
 function Places() {
   return (
