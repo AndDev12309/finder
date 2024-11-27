@@ -42,6 +42,7 @@ function Informationn({ cardFounds }) {
                     icon="pets"
                     title={found.species}
                     description={`${found.breed}, ${found.color}`}
+                    color="primary"
                   />
                   <RotatingCardBack
                     image={backImage}
@@ -49,7 +50,7 @@ function Informationn({ cardFounds }) {
                     description={found.description}
                     action={{
                       type: "internal",
-                      route: `/found/${found.id}`,
+                      route: `/found/${found.documentId}`,
                       label: "Ver detalles",
                     }}
                   />

@@ -12,7 +12,7 @@ import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import MKButton from "components/MKButton";
 
-function RotatingCard({ color, image, title, description, action }) {
+function RotatingCard({ color, image, title, description, action, buttonColor, colorTitle }) {
   return (
     <MKBox
       display="flex"
@@ -38,7 +38,7 @@ function RotatingCard({ color, image, title, description, action }) {
       }}
     >
       <MKBox pt={12} pb={2} px={2} textAlign="center" lineHeight={1}>
-        <MKTypography variant="h3" color="white" gutterBottom>
+        <MKTypography variant="h3" color={colorTitle} gutterBottom>
           {title}
         </MKTypography>
         <MKTypography variant="body2" color="white" opacity={0.9}>
@@ -52,14 +52,20 @@ function RotatingCard({ color, image, title, description, action }) {
                 href={action.route}
                 target="_blank"
                 rel="noreferrer"
-                color="white"
+                color={buttonColor}
                 size="small"
                 fullWidth
               >
                 {action.label}
               </MKButton>
             ) : (
-              <MKButton component={Link} to={action.route} color="white" size="small" fullWidth>
+              <MKButton
+                component={Link}
+                to={action.route}
+                color={buttonColor}
+                size="small"
+                fullWidth
+              >
                 {action.label}
               </MKButton>
             )}
@@ -73,6 +79,8 @@ function RotatingCard({ color, image, title, description, action }) {
 // Setting default props for the RotatingCard
 RotatingCard.defaultProps = {
   color: "info",
+  buttonColor: "white",
+  colorTitle: "white",
 };
 
 // Typechecking props for the RotatingCard
@@ -87,8 +95,28 @@ RotatingCard.propTypes = {
     "dark",
     "light",
   ]),
+  colorTitle: PropTypes.oneOf([
+    "primary",
+    "secondary",
+    "info",
+    "success",
+    "warning",
+    "error",
+    "dark",
+    "light",
+  ]),
   image: PropTypes.string.isRequired,
   title: PropTypes.node.isRequired,
+  buttonColor: PropTypes.oneOf([
+    "primary",
+    "secondary",
+    "info",
+    "success",
+    "warning",
+    "error",
+    "dark",
+    "light",
+  ]),
   description: PropTypes.node.isRequired,
   action: PropTypes.oneOfType([
     PropTypes.bool,

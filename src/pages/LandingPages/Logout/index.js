@@ -25,4 +25,4 @@ const Logout = () => {
   return <LoadingSpinner />;
 };
 
-export default withAuth(Logout, "/presentation");
+export default withAuth(Logout, "/pets");

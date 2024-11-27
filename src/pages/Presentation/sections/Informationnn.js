@@ -6,13 +6,11 @@ import Grid from "@mui/material/Grid";
 import MKBox from "components/MKBox";
 import PropTypes from "prop-types";
 
-// Material Kit 2 React examples
 import RotatingCard from "examples/Cards/RotatingCard";
 import RotatingCardBack from "examples/Cards/RotatingCard/RotatingCardBack";
 import RotatingCardFront from "examples/Cards/RotatingCard/RotatingCardFront";
 
 function Informationnn({ cardFounds = [], cardLosts = [] }) {
-  // Combine both lists into a single array
   const combinedCards = [...cardFounds, ...cardLosts];
 
   return (
@@ -33,7 +31,6 @@ function Informationnn({ cardFounds = [], cardLosts = [] }) {
                   }`
                 : frontImage;
 
-            // Determine if card is "found" or "lost" for dynamic field access
             const isLost = card.last_seen_location !== undefined;
 
             return (
@@ -41,23 +38,20 @@ function Informationnn({ cardFounds = [], cardLosts = [] }) {
                 <RotatingCard>
                   <RotatingCardFront
                     image={frontImage}
-                    icon="pets"
+                    icon="check"
                     title={isLost ? card.name : card.species}
                     description={
                       isLost
                         ? `${card.species}, ${card.breed}, ${card.age} años`
                         : `${card.breed}, ${card.color}`
                     }
+                    color="success"
                   />
                   <RotatingCardBack
                     image={backImage}
                     title={isLost ? card.last_seen_location : card.found_location}
                     description={card.description}
-                    action={{
-                      type: "internal",
-                      route: isLost ? `/lost/${card.id}` : `/found/${card.id}`,
-                      label: "Ver detalles",
-                    }}
+                    color="success"
                   />
                 </RotatingCard>
               </Grid>

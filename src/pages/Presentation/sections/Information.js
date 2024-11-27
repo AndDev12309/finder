@@ -43,6 +43,7 @@ function Information({ cardLosts }) {
                     icon="pets"
                     title={lost.name}
                     description={`${lost.species}, ${lost.breed}, ${lost.age} años`}
+                    color="warning"
                   />
                   <RotatingCardBack
                     image={backImage}
@@ -50,7 +51,7 @@ function Information({ cardLosts }) {
                     description={lost.description}
                     action={{
                       type: "internal",
-                      route: `/lost/${lost.id}`,
+                      route: `/lost/${lost.documentId}`,
                       label: "Ver detalles",
                     }}
                   />

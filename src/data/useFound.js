@@ -1,14 +1,14 @@
+import API from "data";
 import useSWR from "swr";
-import API from "./index";
 import buildUrl from "utils/buildUrl";
 
-export const useLosts = (options = {}) => {
+export const useFound = (id, options = {}) => {
   const query = buildUrl(options);
-  const url = `/losts${query ? `?${query}` : ""}`;
+  const url = id ? `/founds/${id}${query ? `?${query}` : ""}` : null;
   const { data, error } = useSWR(url, API.fetcher);
 
   return {
-    losts: data && data.data,
+    found: data && data.data,
     isLoading: !error && !data,
     isError: error,
   };

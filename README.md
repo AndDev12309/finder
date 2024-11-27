@@ -136,7 +136,7 @@ material-kit-2-react
     │   │   ├── pages
     │   │   │    ├── authentication
     │   │   │    ├── landing-pages
-    │   │   │    └── presentation
+    │   │   │    └── pets
     │   │   ├── sections
     │   │   │    ├── attention-catchers
     │   │   │    ├── components
