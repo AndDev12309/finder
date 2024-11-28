@@ -1,5 +1,6 @@
-// react-router-dom components
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -21,59 +22,53 @@ import MKTypography from "components/MKTypography";
 import SimpleFooter from "layouts/pages/shared/Footers/SimpleFooter";
 import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
 
-// Material Kit 2 React page layout routes
-
 // Images
 import bgImage from "assets/images/bgLogin.jpg";
-import LoadingSpinner from "components/Loading/LoadingSpinner";
 import API from "data";
 import withoutAuth from "hocs/withoutAuth";
 import Cookies from "js-cookie";
 import { useAuth } from "providers/Auth";
-import { useState } from "react";
 import { routesPublic } from "routes";
 
 function SignUpBasic() {
   const { setAuthenticated, setCurrentUser } = useAuth();
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
 
-  const register = async () => {
-    if (username === "" || password === "" || email === "" || phone === "") {
-      return alert("Ingrese usaurio y contraseña");
-    }
-    if (password.trim() !== confirmPassword.trim()) {
-      return alert("Usaurio y Contraseña no coinciden");
-    }
+  // Setup react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    const { username, email, password } = data;
+
     try {
-      setLoading(true);
       const response = await API.post("/auth/local/register", {
         username: username.trim(),
         email: email.trim(),
         password: password.trim(),
       });
+
       if (response.status === 200) {
         localStorage.setItem("login", JSON.stringify(true));
         Cookies.set("token", response.data.jwt, { expires: 1 });
         API.headers["Authorization"] = "Bearer " + response.data.jwt;
         setCurrentUser(response.data.user);
         setAuthenticated(true);
-        setLoading(false);
         navigate("/pets");
       }
     } catch (e) {
       setAuthenticated(false);
-      if (e.status === 401) {
-        setLoading(false);
-        return alert("Usuario o Contraseña incorrectos");
+      if (e.status === 400) {
+        return alert(
+          e?.error?.name.includes("ApplicationError")
+            ? "Usuario o email ya existen"
+            : "Por favor intente en unos minutos"
+        );
       }
-      setLoading(false);
-      return alert("Porfavor intente en unos minutos");
+      alert("Por favor intente en unos minutos");
     }
   };
 
@@ -90,7 +85,6 @@ function SignUpBasic() {
         transparent
         light
       />
-      {loading && <LoadingSpinner />}
       <MKBox
         position="absolute"
         top={0}
@@ -146,12 +140,18 @@ function SignUpBasic() {
                 </Grid>
               </MKBox>
               <MKBox pt={4} pb={3} px={3}>
-                <MKBox component="form" role="form">
+                <MKBox component="form" role="form" onSubmit={handleSubmit(onSubmit)}>
                   <MKBox mb={2}>
                     <MKInput
                       type="text"
                       label="Username"
-                      onChange={(e) => setUsername(e.target.value)}
+                      {...register("username", {
+                        required: "El nombre de usuario es obligatorio.",
+                        minLength: { value: 3, message: "Mínimo 3 caracteres." },
+                        maxLength: { value: 20, message: "Máximo 20 caracteres." },
+                      })}
+                      error={!!errors.username}
+                      helperText={errors.username?.message}
                       fullWidth
                     />
                   </MKBox>
@@ -159,7 +159,15 @@ function SignUpBasic() {
                     <MKInput
                       type="email"
                       label="Email"
-                      onChange={(e) => setEmail(e.target.value)}
+                      {...register("email", {
+                        required: "El correo electrónico es obligatorio.",
+                        pattern: {
+                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                          message: "Formato de correo no válido.",
+                        },
+                      })}
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
                       fullWidth
                     />
                   </MKBox>
@@ -167,7 +175,9 @@ function SignUpBasic() {
                     <MKInput
                       type="text"
                       label="Telefono"
-                      onChange={(e) => setPhone(e.target.value)}
+                      {...register("phone")}
+                      error={!!errors.phone}
+                      helperText={errors.phone?.message}
                       fullWidth
                     />
                   </MKBox>
@@ -175,7 +185,16 @@ function SignUpBasic() {
                     <MKInput
                       type="password"
                       label="Password"
-                      onChange={(e) => setPassword(e.target.value)}
+                      {...register("password", {
+                        required: "La contraseña es obligatoria.",
+                        minLength: { value: 8, message: "Debe tener al menos 8 caracteres." },
+                        pattern: {
+                          value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+                          message: "Debe incluir letras y números.",
+                        },
+                      })}
+                      error={!!errors.password}
+                      helperText={errors.password?.message}
                       fullWidth
                     />
                   </MKBox>
@@ -183,13 +202,25 @@ function SignUpBasic() {
                     <MKInput
                       type="password"
                       label="Confirm Password"
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      {...register("confirmPassword", {
+                        required: "Debes confirmar tu contraseña.",
+                        validate: (value, data) =>
+                          value === data.password || "Las contraseñas no coinciden.",
+                      })}
+                      error={!!errors.confirmPassword}
+                      helperText={errors.confirmPassword?.message}
                       fullWidth
                     />
                   </MKBox>
                   <MKBox mt={4} mb={1}>
-                    <MKButton variant="gradient" color="info" onClick={register} fullWidth>
-                      Registrarme
+                    <MKButton
+                      variant="gradient"
+                      color="info"
+                      type="submit"
+                      fullWidth
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Procesando..." : "Registrarme"}
                     </MKButton>
                   </MKBox>
                   <MKBox mt={3} mb={1} textAlign="center">

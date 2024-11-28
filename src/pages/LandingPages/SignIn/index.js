@@ -61,12 +61,14 @@ function SignInBasic() {
       navigate("/pets");
     } catch (e) {
       setAuthenticated(false);
-      if (e.status === 401) {
-        setLoading(false);
-        return alert("Usuario o Contraseña incorrectos");
+      if (e.status === 400) {
+        return alert(
+          e?.error?.name.includes("ValidationError")
+            ? "Uusario o contraseña incorrectos"
+            : "Por favor intente en unos minutos"
+        );
       }
-      setLoading(false);
-      return alert("Porfavor intente en unos minutos");
+      alert("Por favor intente en unos minutos");
     }
   };
 
