@@ -5,8 +5,8 @@ import Grid from "@mui/material/Grid";
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
 
-// Material Kit 2 React examples
-import DefaultReviewCard from "examples/Cards/ReviewCards/DefaultReviewCard";
+// Material Kit 2 React layouts/pages/shared
+import DefaultReviewCard from "layouts/pages/shared/Cards/ReviewCards/DefaultReviewCard";
 
 // Images
 

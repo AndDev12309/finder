@@ -2,7 +2,7 @@ import { PhotoCamera } from "@mui/icons-material";
 import { Box, Button, Container, FormControl, Grid, TextField, Typography } from "@mui/material";
 import huellasImge from "assets/images/huellasPets.jpeg";
 import MKBox from "components/MKBox";
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
+import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
 import withAuth from "hocs/withAuth";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";

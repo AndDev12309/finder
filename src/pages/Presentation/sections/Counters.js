@@ -7,8 +7,8 @@ import propTypes from "prop-types";
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
 
-// Material Kit 2 React examples
-import DefaultCounterCard from "examples/Cards/CounterCards/DefaultCounterCard";
+// Material Kit 2 React layouts/pages/shared
+import DefaultCounterCard from "layouts/pages/shared/Cards/CounterCards/DefaultCounterCard";
 
 function Counters({ lost, found, rescued }) {
   return (

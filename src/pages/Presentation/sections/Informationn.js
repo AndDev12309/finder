@@ -6,10 +6,10 @@ import Grid from "@mui/material/Grid";
 import MKBox from "components/MKBox";
 import PropTypes from "prop-types";
 
-// Material Kit 2 React examples
-import RotatingCard from "examples/Cards/RotatingCard";
-import RotatingCardBack from "examples/Cards/RotatingCard/RotatingCardBack";
-import RotatingCardFront from "examples/Cards/RotatingCard/RotatingCardFront";
+// Material Kit 2 React layouts/pages/shared
+import RotatingCard from "layouts/pages/shared/Cards/RotatingCard";
+import RotatingCardBack from "layouts/pages/shared/Cards/RotatingCard/RotatingCardBack";
+import RotatingCardFront from "layouts/pages/shared/Cards/RotatingCard/RotatingCardFront";
 // Images
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";

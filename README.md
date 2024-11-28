@@ -127,7 +127,7 @@ material-kit-2-react
     │   │   ├── MKrogress
     │   │   ├── MKSocialButton
     │   │   └── MKTypography
-    │   ├── examples
+    │   ├── layouts/pages/shared
     │   │   ├── Breadcrumbs
     │   │   ├── Cards
     │   │   ├── Footer

@@ -6,9 +6,9 @@ import Grid from "@mui/material/Grid";
 import MKBox from "components/MKBox";
 import PropTypes from "prop-types";
 
-import RotatingCard from "examples/Cards/RotatingCard";
-import RotatingCardBack from "examples/Cards/RotatingCard/RotatingCardBack";
-import RotatingCardFront from "examples/Cards/RotatingCard/RotatingCardFront";
+import RotatingCard from "layouts/pages/shared/Cards/RotatingCard";
+import RotatingCardBack from "layouts/pages/shared/Cards/RotatingCard/RotatingCardBack";
+import RotatingCardFront from "layouts/pages/shared/Cards/RotatingCard/RotatingCardFront";
 
 function Informationnn({ cardFounds = [], cardLosts = [] }) {
   const combinedCards = [...cardFounds, ...cardLosts];
