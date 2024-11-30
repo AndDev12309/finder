@@ -21,6 +21,8 @@ import PresentationPage from "layouts/pages/presentation";
 import { AuthProvider } from "providers/Auth";
 import routes from "routes";
 import PublishhPage from "layouts/pages/landing-pages/publishh";
+import ResetPasswordPage from "layouts/pages/landing-pages/ResetPassword";
+import ForgotPasswordPage from "layouts/pages/landing-pages/ForgotPassword";
 
 export default function App() {
   const { pathname } = useLocation();
@@ -52,6 +54,8 @@ export default function App() {
           {getRoutes(routes)}
           <Route path="/pets" element={<PresentationPage />} />
 
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
           <Route path="/logout" element={<LogoutPage />} />

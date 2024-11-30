@@ -1,6 +1,5 @@
-import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -26,18 +25,16 @@ import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
 import bgImage from "assets/images/bgLogin.jpg";
 import API from "data";
 import withoutAuth from "hocs/withoutAuth";
-import Cookies from "js-cookie";
-import { useAuth } from "providers/Auth";
 import { routesPublic } from "routes";
 
 function SignUpBasic() {
-  const { setAuthenticated, setCurrentUser } = useAuth();
   const navigate = useNavigate();
 
   // Setup react-hook-form
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm();
 
@@ -51,16 +48,20 @@ function SignUpBasic() {
         password: password.trim(),
       });
 
-      if (response.status === 200) {
-        localStorage.setItem("login", JSON.stringify(true));
-        Cookies.set("token", response.data.jwt, { expires: 1 });
-        API.headers["Authorization"] = "Bearer " + response.data.jwt;
-        setCurrentUser(response.data.user);
-        setAuthenticated(true);
-        navigate("/pets");
+      // if (response.status === 200 && response.data.jwt) {
+      //   localStorage.setItem("login", JSON.stringify(true));
+      //   Cookies.set("token", response.data.jwt, { expires: 1 });
+      //   API.headers["Authorization"] = "Bearer " + response.data.jwt;
+      //   setCurrentUser(response.data.user);
+      //   setAuthenticated(true);
+      // }
+      if (response.data.user) {
+        alert(
+          "¡Correo de confirmación enviado! Por favor, revisa tu bandeja de entrada para verificar tu cuenta."
+        );
+        return navigate("/pets");
       }
     } catch (e) {
-      setAuthenticated(false);
       if (e.status === 400) {
         return alert(
           e?.error?.name.includes("ApplicationError")

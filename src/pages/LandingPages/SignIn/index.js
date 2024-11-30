@@ -52,11 +52,11 @@ function SignInBasic() {
   }, []);
 
   const handleGoogleLogin = () => {
-    window.location.href = "https://finder-api-production.up.railway.app/api/connect/google";
+    window.location.href = `${process.env.REACT_APP_API_HOST}/connect/google`;
   };
 
   const handleFacebookLogin = () => {
-    window.location.href = "https://finder-api-production.up.railway.app/api/connect/facebook";
+    window.location.href = `${process.env.REACT_APP_API_HOST}/connect/facebook`;
   };
 
   const handleLoginWithToken = async (accessToken, provider) => {
@@ -75,7 +75,7 @@ function SignInBasic() {
             setCurrentUser(responseLogin.data.user);
             setAuthenticated(true);
             setLoading(false);
-            navigate("/pets");
+            navigate("/me-publishes");
           }
         } catch (error) {
           console.error("Error al obtener userInfo:", error);
@@ -103,7 +103,7 @@ function SignInBasic() {
       setCurrentUser(response.data.user);
       setAuthenticated(true);
       setLoading(false);
-      navigate("/pets");
+      navigate("/me-publishes");
     } catch (e) {
       setAuthenticated(false);
       if (e.status === 400) {
@@ -223,6 +223,20 @@ function SignInBasic() {
                     <MKButton variant="gradient" color="info" fullWidth onClick={login}>
                       Ingresar
                     </MKButton>
+                  </MKBox>
+                  <MKBox mt={2} textAlign="center">
+                    <MKTypography variant="button" color="text">
+                      <MKTypography
+                        component={Link}
+                        to="/forgot-password"
+                        variant="button"
+                        color="info"
+                        fontWeight="medium"
+                        textGradient
+                      >
+                        ¿Olvidaste tu contraseña?
+                      </MKTypography>
+                    </MKTypography>
                   </MKBox>
                   <MKBox mt={3} mb={1} textAlign="center">
                     <MKTypography variant="button" color="text">
