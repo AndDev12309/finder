@@ -41,7 +41,6 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
   const openMobileNavbar = () => setMobileNavbar(!mobileNavbar);
 
   useEffect(() => {
-    console.log("routes", routes);
     // A function that sets the display state for the DefaultNavbarMobile.
     function displayMobileNavbar() {
       if (window.innerWidth < breakpoints.values.lg) {
@@ -474,39 +473,72 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
             {renderNavbarItems}
           </MKBox>
           <MKBox ml={{ xs: "auto", lg: 0 }}>
-            {action &&
-              (action.type === "internal" ? (
-                <MKButton
-                  component={Link}
-                  to={action.route}
-                  variant={
-                    action.color === "white" || action.color === "default"
-                      ? "contained"
-                      : "gradient"
-                  }
-                  color={action.color ? action.color : "info"}
-                  size="small"
-                >
-                  {action.label}
-                </MKButton>
-              ) : (
-                <MKButton
-                  component="a"
-                  href={action.route}
-                  target="_blank"
-                  rel="noreferrer"
-                  variant={
-                    action.color === "white" || action.color === "default"
-                      ? "contained"
-                      : "gradient"
-                  }
-                  color={action.color ? action.color : "info"}
-                  size="small"
-                >
-                  {action.label}
-                </MKButton>
-              ))}
+            {Array.isArray(action)
+              ? action.map((act, index) =>
+                  act.type === "internal" ? (
+                    <MKButton
+                      key={`action-${index}`}
+                      component={Link}
+                      to={act.route}
+                      variant={
+                        act.color === "white" || act.color === "default" ? "contained" : "gradient"
+                      }
+                      color={act.color ? act.color : "info"}
+                      size="small"
+                    >
+                      {act.label}
+                    </MKButton>
+                  ) : (
+                    <MKButton
+                      key={`action-${index}`}
+                      component="a"
+                      href={act.route}
+                      target="_blank"
+                      rel="noreferrer"
+                      variant={
+                        act.color === "white" || act.color === "default" ? "contained" : "gradient"
+                      }
+                      color={act.color ? act.color : "info"}
+                      size="small"
+                    >
+                      {act.label}
+                    </MKButton>
+                  )
+                )
+              : action &&
+                (action.type === "internal" ? (
+                  <MKButton
+                    component={Link}
+                    to={action.route}
+                    variant={
+                      action.color === "white" || action.color === "default"
+                        ? "contained"
+                        : "gradient"
+                    }
+                    color={action.color ? action.color : "info"}
+                    size="small"
+                  >
+                    {action.label}
+                  </MKButton>
+                ) : (
+                  <MKButton
+                    component="a"
+                    href={action.route}
+                    target="_blank"
+                    rel="noreferrer"
+                    variant={
+                      action.color === "white" || action.color === "default"
+                        ? "contained"
+                        : "gradient"
+                    }
+                    color={action.color ? action.color : "info"}
+                    size="small"
+                  >
+                    {action.label}
+                  </MKButton>
+                ))}
           </MKBox>
+
           <MKBox
             display={{ xs: "inline-block", lg: "none" }}
             lineHeight={0}
@@ -570,6 +602,25 @@ DefaultNavbar.propTypes = {
       ]),
       label: PropTypes.string.isRequired,
     }),
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        type: PropTypes.oneOf(["external", "internal"]).isRequired,
+        route: PropTypes.string.isRequired,
+        color: PropTypes.oneOf([
+          "primary",
+          "secondary",
+          "info",
+          "success",
+          "warning",
+          "error",
+          "dark",
+          "light",
+          "default",
+          "white",
+        ]),
+        label: PropTypes.string.isRequired,
+      })
+    ),
   ]),
   sticky: PropTypes.bool,
   relative: PropTypes.bool,

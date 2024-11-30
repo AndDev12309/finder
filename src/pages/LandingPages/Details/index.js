@@ -2,23 +2,35 @@ import { Box, Card, CardContent, Container, Grid, Typography } from "@mui/materi
 import huellasImge from "assets/images/huellasPets.jpeg";
 import MKBox from "components/MKBox";
 import MKButton from "components/MKButton";
+import API from "data";
 import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
 import Contact from "pages/LandingPages/Details/Contact";
 import PropTypes from "prop-types";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useAuth } from "providers/Auth";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import { routesPrivate } from "routes";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
+import CelebrationConfetti from "../RescuedPet";
 
 function DetailsPage({ item, type }) {
+  const autenticate = useAuth();
+  const navigate = useNavigate();
+  const [isRescued, setIsRescued] = useState(false);
   const images = item.photos?.map(
     (photo) => `${process.env.REACT_APP_API_HOST_URL}${photo.formats?.medium?.url || photo.url}`
   ) || ["path/to/default/image.jpg"];
 
   const [currentImage, setCurrentImage] = useState(0);
   const [isContactModalOpen, setContactModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (item && item.state === "Rescued") {
+      setIsRescued(true);
+    }
+  }, [item]);
 
   const carouselSettings = {
     dots: false,
@@ -39,18 +51,47 @@ function DetailsPage({ item, type }) {
     alert("Correo enviado con éxito.");
   };
 
+  const handleMarkAsRescued = async () => {
+    try {
+      const response = await API.put(
+        item.name ? `/losts/${item.documentId}` : `/founds/${item.documentId}`,
+        { data: { state: "Rescued" } }
+      );
+      if (response.status === 200 || response.status === 201) {
+        setIsRescued(true);
+      } else {
+        alert("Error al actualizar el estado");
+      }
+    } catch (error) {
+      console.error("Error al actualizar estado:", error);
+      alert("Error al actualizar el estado, intente nuevamente");
+    }
+  };
+
+  const handleEdit = () => {
+    return navigate(`/edit-lost/${item.documentId}`);
+  };
+
   const isLost = type === "lost";
 
   return (
     <>
       <DefaultNavbar
         routes={routesPrivate}
-        action={{
-          type: "internal",
-          route: "/logout",
-          label: "Cerrar Sesion",
-          color: "info",
-        }}
+        action={[
+          {
+            type: "internal",
+            route: "/me-publishes",
+            label: "Mis publicaciones",
+            color: "primary",
+          },
+          {
+            type: "internal",
+            route: "/logout",
+            label: "Cerrar Sesion",
+            color: "info",
+          },
+        ]}
         sticky
       />
       <MKBox
@@ -182,16 +223,33 @@ function DetailsPage({ item, type }) {
                     justifyContent: "center",
                   }}
                 >
-                  <MKButton variant="gradient" color="info" component={Link} to={`/${type}s`}>
+                  {autenticate.isAuthenticated && item.state !== "Rescued" && !isRescued && (
+                    <>
+                      <MKButton variant="contained" color="success" onClick={handleMarkAsRescued}>
+                        Marcar como Rescatado
+                      </MKButton>
+                      <MKButton variant="gradient" color="info" onClick={handleEdit}>
+                        Editar
+                      </MKButton>
+                    </>
+                  )}
+                  <MKButton
+                    variant="gradient"
+                    color="info"
+                    component={Link}
+                    to={item ? "/me-publishes" : `/${type}s`}
+                  >
                     Volver a la lista
                   </MKButton>
-                  <MKButton
-                    variant="contained"
-                    color="success"
-                    onClick={() => setContactModalOpen(true)}
-                  >
-                    Contactar
-                  </MKButton>
+                  {!autenticate.isAuthenticated && (
+                    <MKButton
+                      variant="contained"
+                      color="success"
+                      onClick={() => setContactModalOpen(true)}
+                    >
+                      Contactar
+                    </MKButton>
+                  )}
                 </Box>
               </CardContent>
             </Card>
@@ -202,6 +260,7 @@ function DetailsPage({ item, type }) {
             />
           </MKBox>
         </Container>
+        {isRescued && <CelebrationConfetti isRescued={isRescued} />}
       </MKBox>
     </>
   );
@@ -209,7 +268,8 @@ function DetailsPage({ item, type }) {
 
 DetailsPage.propTypes = {
   item: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.number,
+    documentId: PropTypes.string,
     name: PropTypes.string,
     species: PropTypes.string,
     breed: PropTypes.string,
@@ -233,7 +293,7 @@ DetailsPage.propTypes = {
       })
     ),
   }).isRequired,
-  type: PropTypes.oneOf(["lost", "found"]).isRequired,
+  type: PropTypes.oneOf(["lost", "found"]),
 };
 
 export default DetailsPage;

@@ -18,7 +18,7 @@ const routes = [
         name: "¡Quiero Ayuda!",
         collapse: [
           {
-            name: "Reprtar Perdida",
+            name: "Reportar Pérdida",
             route: "/publish-lost",
             component: <PublishPage />,
           },
@@ -50,7 +50,7 @@ export const routesPrivate = [
         name: "¡Quiero Ayuda!",
         collapse: [
           {
-            name: "Reprtar Perdida",
+            name: "Reportar Pérdida",
             route: "/publish-lost",
             component: <PublishPage />,
           },

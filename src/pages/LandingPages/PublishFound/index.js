@@ -2,13 +2,19 @@ import { PhotoCamera } from "@mui/icons-material";
 import { Box, Button, Container, FormControl, Grid, TextField, Typography } from "@mui/material";
 import huellasImge from "assets/images/huellasPets.jpeg";
 import MKBox from "components/MKBox";
-import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
+import API from "data";
 import withAuth from "hocs/withAuth";
-import { useState } from "react";
+import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
+import PropTypes from "prop-types";
+import { useAuth } from "providers/Auth";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { routesPrivate } from "routes";
 
-const FoundForm = () => {
+const FoundForm = ({ item }) => {
+  const autenticate = useAuth();
+  const navigate = useNavigate();
   const {
     handleSubmit,
     control,
@@ -16,20 +22,84 @@ const FoundForm = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      species: "",
-      breed: "",
-      color: "",
-      description: "",
-      found_location: "",
-      date_found: "",
+      species: item?.species || "",
+      breed: item?.breed || "",
+      color: item?.color || "",
+      description: item?.description || "",
+      found_location: item?.found_location || "",
+      date_found: item?.date_found || "",
       photos: [],
     },
   });
 
+  useEffect(() => {
+    if (item?.photos) {
+      setImagePreviews(
+        item.photos.map(
+          (photo) =>
+            `${process.env.REACT_APP_API_HOST_URL}${photo.formats?.medium?.url || photo.url}`
+        )
+      );
+    }
+  }, [item]);
+
   const [imagePreviews, setImagePreviews] = useState([]);
 
-  const onSubmit = (data) => {
-    console.log("Datos enviados:", data);
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+
+    data.photos.forEach((photo) => {
+      if (photo instanceof File) {
+        formData.append("files", photo);
+      }
+    });
+
+    try {
+      // const uploadResponse = await API.post("/upload", formData);
+
+      // const photoIds = uploadResponse.data.map((file) => file.id);
+
+      let photoIds = item?.photos?.map((photo) => photo.id) || [];
+      if (formData.has("files")) {
+        const uploadResponse = await API.post("/upload", formData);
+        photoIds = [...photoIds, ...uploadResponse.data.map((file) => file.id)];
+      }
+      const requestData = {
+        data: {
+          species: data.species,
+          breed: data.breed,
+          color: data.color,
+          description: data.description,
+          found_location: data.found_location,
+          date_found: data.date_found,
+          photos: photoIds,
+          user: autenticate.currentUser.id,
+        },
+      };
+      const response = item
+        ? await API.put(`/founds/${item.documentId}`, requestData)
+        : await API.post("/founds", requestData);
+
+      // const response = await API.post("/founds", {
+      //   data: {
+      //     species: data.species,
+      //     breed: data.breed,
+      //     color: data.color,
+      //     description: data.description,
+      //     found_location: data.found_location,
+      //     date_found: data.date_found,
+      //     photos: photoIds,
+      //     user: autenticate.currentUser.id,
+      //     // publishedAt: null,
+      //     // status: null,
+      //   },
+      // });
+      if (response.status === 200 || response.status === 201) {
+        return item ? navigate("/me-publishes") : navigate("/");
+      }
+    } catch (e) {
+      alert("Por favor intente en unos minutos");
+    }
   };
 
   const handleFileChange = async (e, field) => {
@@ -231,7 +301,8 @@ const FoundForm = () => {
                   name="photos"
                   control={control}
                   rules={{
-                    validate: (value) => value.length > 0 || "Debes subir al menos una imagen",
+                    validate: (value) =>
+                      value.length > 0 || item || "Debes subir al menos una imagen",
                   }}
                   render={({ field }) => (
                     <FormControl fullWidth>
@@ -328,6 +399,32 @@ const FoundForm = () => {
       </MKBox>
     </>
   );
+};
+
+FoundForm.propTypes = {
+  item: PropTypes.shape({
+    id: PropTypes.number,
+    documentId: PropTypes.string,
+    species: PropTypes.string,
+    breed: PropTypes.string,
+    color: PropTypes.string,
+    description: PropTypes.string,
+    found_location: PropTypes.string,
+    state: PropTypes.string,
+    date_found: PropTypes.string,
+    photos: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number,
+        formats: PropTypes.shape({
+          medium: PropTypes.shape({
+            url: PropTypes.string,
+          }),
+        }),
+        url: PropTypes.string,
+      })
+    ),
+  }).isRequired,
+  type: PropTypes.oneOf(["lost", "found"]),
 };
 
 export default withAuth(FoundForm);
