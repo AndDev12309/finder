@@ -18,20 +18,22 @@ function Publishes({ cardFounds = [], cardLosts = [] }) {
       <Container>
         <Grid container item xs={12} spacing={3} alignItems="center" sx={{ mx: "auto" }}>
           {combinedCards.map((card) => {
-            const frontImage =
-              card.photos && card.photos[0]
-                ? `${process.env.REACT_APP_API_HOST_URL}${
-                    card.photos[0].formats?.medium?.url || card.photos[0].url
-                  }`
-                : "path/to/default/image.jpg";
-            const backImage =
-              card.photos && card.photos[1]
-                ? `${process.env.REACT_APP_API_HOST_URL}${
-                    card.photos[1].formats?.medium?.url || card.photos[1].url
-                  }`
-                : frontImage;
+            const attributes = card.attributes || {};
+            const photos = attributes.photos?.data || [];
 
-            const isLost = card.last_seen_location !== undefined;
+            const frontImage = photos[0]?.attributes
+              ? `${process.env.REACT_APP_API_HOST_URL}${
+                  photos[0].attributes.formats?.medium?.url || photos[0].attributes.url
+                }`
+              : "path/to/default/image.jpg";
+
+            const backImage = photos[1]?.attributes
+              ? `${process.env.REACT_APP_API_HOST_URL}${
+                  photos[1].attributes.formats?.medium?.url || photos[1].attributes.url
+                }`
+              : frontImage;
+
+            const isLost = attributes.last_seen_location !== undefined;
 
             return (
               <Grid item xs={12} sm={4} lg={5} sx={{ mx: "auto" }} key={card.id}>
@@ -39,22 +41,22 @@ function Publishes({ cardFounds = [], cardLosts = [] }) {
                   <RotatingCardFront
                     image={frontImage}
                     icon="pets"
-                    title={isLost ? card.name : card.species}
+                    title={isLost ? attributes.name : attributes.species}
                     description={
                       isLost
-                        ? `${card.species}, ${card.breed}, ${card.age} años`
-                        : `${card.breed}, ${card.color}`
+                        ? `${attributes.species}, ${attributes.breed}, ${attributes.age} años`
+                        : `${attributes.breed}, ${attributes.color}`
                     }
-                    color="info"
+                    color={attributes.publishedAt ? "success" : "warning"}
                   />
                   <RotatingCardBack
                     image={backImage}
-                    title={isLost ? card.last_seen_location : card.found_location}
-                    description={card.description}
+                    title={isLost ? attributes.last_seen_location : attributes.found_location}
+                    description={attributes.description}
                     color={"info"}
                     action={{
                       type: "internal",
-                      route: isLost ? `/lost/${card.documentId}` : `/found/${card.documentId}`,
+                      route: isLost ? `/lost/${card.id}` : `/found/${card.id}`,
                       label: "Ver detalles",
                     }}
                   />
@@ -72,44 +74,55 @@ Publishes.propTypes = {
   cardFounds: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      documentId: PropTypes.string.isRequired,
-      species: PropTypes.string.isRequired,
-      breed: PropTypes.string,
-      color: PropTypes.string,
-      description: PropTypes.string,
-      found_location: PropTypes.string,
-      photos: PropTypes.arrayOf(
-        PropTypes.shape({
-          formats: PropTypes.shape({
-            medium: PropTypes.shape({
-              url: PropTypes.string,
-            }),
-          }),
-          url: PropTypes.string,
-        })
-      ),
+      attributes: PropTypes.shape({
+        species: PropTypes.string.isRequired,
+        breed: PropTypes.string,
+        color: PropTypes.string,
+        description: PropTypes.string,
+        found_location: PropTypes.string,
+        photos: PropTypes.shape({
+          data: PropTypes.arrayOf(
+            PropTypes.shape({
+              attributes: PropTypes.shape({
+                formats: PropTypes.shape({
+                  medium: PropTypes.shape({
+                    url: PropTypes.string,
+                  }),
+                }),
+                url: PropTypes.string,
+              }),
+            })
+          ),
+        }),
+      }).isRequired,
     })
   ),
   cardLosts: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      documentId: PropTypes.string.isRequired,
-      species: PropTypes.string.isRequired,
-      breed: PropTypes.string,
-      age: PropTypes.number,
-      description: PropTypes.string,
-      last_seen_location: PropTypes.string,
-      photos: PropTypes.arrayOf(
-        PropTypes.shape({
-          formats: PropTypes.shape({
-            medium: PropTypes.shape({
-              url: PropTypes.string,
-            }),
-          }),
-          url: PropTypes.string,
-        })
-      ),
+      attributes: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        species: PropTypes.string.isRequired,
+        breed: PropTypes.string,
+        age: PropTypes.number,
+        description: PropTypes.string,
+        last_seen_location: PropTypes.string,
+        publishedAt: PropTypes.string,
+        photos: PropTypes.shape({
+          data: PropTypes.arrayOf(
+            PropTypes.shape({
+              attributes: PropTypes.shape({
+                formats: PropTypes.shape({
+                  medium: PropTypes.shape({
+                    url: PropTypes.string,
+                  }),
+                }),
+                url: PropTypes.string,
+              }),
+            })
+          ),
+        }),
+      }).isRequired,
     })
   ),
 };

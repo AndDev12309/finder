@@ -18,20 +18,22 @@ function Informationnn({ cardFounds = [], cardLosts = [] }) {
       <Container>
         <Grid container item xs={12} spacing={3} alignItems="center" sx={{ mx: "auto" }}>
           {combinedCards.map((card) => {
-            const frontImage =
-              card.photos && card.photos[0]
-                ? `${process.env.REACT_APP_API_HOST_URL}${
-                    card.photos[0].formats?.medium?.url || card.photos[0].url
-                  }`
-                : "path/to/default/image.jpg";
-            const backImage =
-              card.photos && card.photos[1]
-                ? `${process.env.REACT_APP_API_HOST_URL}${
-                    card.photos[1].formats?.medium?.url || card.photos[1].url
-                  }`
-                : frontImage;
+            const attributes = card.attributes || {};
+            const photos = attributes.photos?.data || [];
 
-            const isLost = card.last_seen_location !== undefined;
+            const frontImage = photos[0]?.attributes
+              ? `${process.env.REACT_APP_API_HOST_URL}${
+                  photos[0].attributes.formats?.medium?.url || photos[0].attributes.url
+                }`
+              : "path/to/default/image.jpg";
+
+            const backImage = photos[1]?.attributes
+              ? `${process.env.REACT_APP_API_HOST_URL}${
+                  photos[1].attributes.formats?.medium?.url || photos[1].attributes.url
+                }`
+              : frontImage;
+
+            const isLost = attributes.last_seen_location !== undefined;
 
             return (
               <Grid item xs={12} lg={3} sx={{ mx: "auto" }} key={card.id}>
@@ -39,17 +41,17 @@ function Informationnn({ cardFounds = [], cardLosts = [] }) {
                   <RotatingCardFront
                     image={frontImage}
                     icon="check"
-                    title={isLost ? card.name : card.species}
+                    title={isLost ? attributes.name : attributes.species}
                     description={
                       isLost
-                        ? `${card.species}, ${card.breed}, ${card.age} años`
-                        : `${card.breed}, ${card.color}`
+                        ? `${attributes.species}, ${attributes.breed}, ${attributes.age} años`
+                        : `${attributes.breed}, ${attributes.color}`
                     }
                     color="success"
                   />
                   <RotatingCardBack
                     image={backImage}
-                    title={isLost ? card.last_seen_location : card.found_location}
+                    title={isLost ? attributes.last_seen_location : attributes.found_location}
                     description={card.description}
                     color="success"
                   />
@@ -67,42 +69,54 @@ Informationnn.propTypes = {
   cardFounds: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      species: PropTypes.string.isRequired,
-      breed: PropTypes.string,
-      color: PropTypes.string,
-      description: PropTypes.string,
-      found_location: PropTypes.string,
-      photos: PropTypes.arrayOf(
-        PropTypes.shape({
-          formats: PropTypes.shape({
-            medium: PropTypes.shape({
-              url: PropTypes.string,
-            }),
-          }),
-          url: PropTypes.string,
-        })
-      ),
+      attributes: PropTypes.shape({
+        species: PropTypes.string.isRequired,
+        breed: PropTypes.string,
+        color: PropTypes.string,
+        description: PropTypes.string,
+        found_location: PropTypes.string,
+        photos: PropTypes.shape({
+          data: PropTypes.arrayOf(
+            PropTypes.shape({
+              attributes: PropTypes.shape({
+                formats: PropTypes.shape({
+                  medium: PropTypes.shape({
+                    url: PropTypes.string,
+                  }),
+                }),
+                url: PropTypes.string,
+              }),
+            })
+          ),
+        }),
+      }).isRequired,
     })
   ),
   cardLosts: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      species: PropTypes.string.isRequired,
-      breed: PropTypes.string,
-      age: PropTypes.number,
-      description: PropTypes.string,
-      last_seen_location: PropTypes.string,
-      photos: PropTypes.arrayOf(
-        PropTypes.shape({
-          formats: PropTypes.shape({
-            medium: PropTypes.shape({
-              url: PropTypes.string,
-            }),
-          }),
-          url: PropTypes.string,
-        })
-      ),
+      attributes: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        species: PropTypes.string.isRequired,
+        breed: PropTypes.string,
+        age: PropTypes.number,
+        description: PropTypes.string,
+        last_seen_location: PropTypes.string,
+        photos: PropTypes.shape({
+          data: PropTypes.arrayOf(
+            PropTypes.shape({
+              attributes: PropTypes.shape({
+                formats: PropTypes.shape({
+                  medium: PropTypes.shape({
+                    url: PropTypes.string,
+                  }),
+                }),
+                url: PropTypes.string,
+              }),
+            })
+          ),
+        }),
+      }).isRequired,
     })
   ),
 };

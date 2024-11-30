@@ -22,18 +22,18 @@ function Information({ cardLosts }) {
       <Container>
         <Slider {...settings}>
           {cardLosts.map((lost) => {
-            const frontImage =
-              lost.photos && lost.photos[0]
-                ? `${process.env.REACT_APP_API_HOST_URL}${
-                    lost.photos[0].formats?.medium?.url || lost.photos[0].url
-                  }`
-                : "path/to/default/image.jpg";
-            const backImage =
-              lost.photos && lost.photos[1]
-                ? `${process.env.REACT_APP_API_HOST_URL}${
-                    lost.photos[1].formats?.medium?.url || lost.photos[1].url
-                  }`
-                : frontImage;
+            const attributes = lost.attributes || {};
+            const photos = attributes.photos?.data || [];
+            const frontImage = photos[0]?.attributes
+              ? `${process.env.REACT_APP_API_HOST_URL}${
+                  photos[0].attributes.formats?.medium?.url || photos[0].attributes.url
+                }`
+              : "path/to/default/image.jpg";
+            const backImage = photos[1]?.attributes
+              ? `${process.env.REACT_APP_API_HOST_URL}${
+                  photos[1].attributes.formats?.medium?.url || photos[1].attributes.url
+                }`
+              : frontImage;
 
             return (
               <Grid item xs={12} lg={3} sx={{ mx: "auto" }} key={lost.id}>
@@ -41,17 +41,17 @@ function Information({ cardLosts }) {
                   <RotatingCardFront
                     image={frontImage}
                     icon="pets"
-                    title={lost.name}
-                    description={`${lost.species}, ${lost.breed}, ${lost.age} años`}
+                    title={attributes.name}
+                    description={`${attributes.species}, ${attributes.breed}, ${attributes.age} años`}
                     color="warning"
                   />
                   <RotatingCardBack
                     image={backImage}
-                    title={lost.last_seen_location}
-                    description={lost.description}
+                    title={attributes.last_seen_location}
+                    description={attributes.description}
                     action={{
                       type: "internal",
-                      route: `/lost/${lost.documentId}`,
+                      route: `/lost/${lost.id}`,
                       label: "Ver detalles",
                     }}
                   />
@@ -64,69 +64,70 @@ function Information({ cardLosts }) {
     </MKBox>
   );
 }
+
 Information.propTypes = {
   cardLosts: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      documentId: PropTypes.string,
-      name: PropTypes.string.isRequired,
-      species: PropTypes.string.isRequired,
-      breed: PropTypes.string,
-      age: PropTypes.number,
-      color: PropTypes.string,
-      description: PropTypes.string,
-      last_seen_location: PropTypes.string,
-      state: PropTypes.string,
-      date_reported: PropTypes.string,
-      createdAt: PropTypes.string,
-      updatedAt: PropTypes.string,
-      publishedAt: PropTypes.string,
-      photos: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.number,
-          documentId: PropTypes.string,
-          name: PropTypes.string,
-          alternativeText: PropTypes.string,
-          caption: PropTypes.string,
-          width: PropTypes.number,
-          height: PropTypes.number,
-          formats: PropTypes.shape({
-            large: PropTypes.shape({
-              ext: PropTypes.string,
-              url: PropTypes.string.isRequired,
-              mime: PropTypes.string,
-              width: PropTypes.number,
-              height: PropTypes.number,
-            }),
-            medium: PropTypes.shape({
-              ext: PropTypes.string,
-              url: PropTypes.string,
-              mime: PropTypes.string,
-              width: PropTypes.number,
-              height: PropTypes.number,
-            }),
-            small: PropTypes.shape({
-              ext: PropTypes.string,
-              url: PropTypes.string,
-              mime: PropTypes.string,
-              width: PropTypes.number,
-              height: PropTypes.number,
-            }),
-            thumbnail: PropTypes.shape({
-              ext: PropTypes.string,
-              url: PropTypes.string,
-              mime: PropTypes.string,
-              width: PropTypes.number,
-              height: PropTypes.number,
-            }),
-          }),
-          url: PropTypes.string,
-          createdAt: PropTypes.string,
-          updatedAt: PropTypes.string,
-          publishedAt: PropTypes.string,
-        })
-      ),
+      attributes: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        species: PropTypes.string.isRequired,
+        breed: PropTypes.string,
+        age: PropTypes.number,
+        color: PropTypes.string,
+        description: PropTypes.string,
+        last_seen_location: PropTypes.string,
+        state: PropTypes.string,
+        date_reported: PropTypes.string,
+        createdAt: PropTypes.string,
+        updatedAt: PropTypes.string,
+        publishedAt: PropTypes.string,
+        photos: PropTypes.shape({
+          data: PropTypes.arrayOf(
+            PropTypes.shape({
+              id: PropTypes.number,
+              attributes: PropTypes.shape({
+                formats: PropTypes.shape({
+                  large: PropTypes.shape({
+                    ext: PropTypes.string,
+                    url: PropTypes.string.isRequired,
+                    mime: PropTypes.string,
+                    width: PropTypes.number,
+                    height: PropTypes.number,
+                  }),
+                  medium: PropTypes.shape({
+                    ext: PropTypes.string,
+                    url: PropTypes.string,
+                    mime: PropTypes.string,
+                    width: PropTypes.number,
+                    height: PropTypes.number,
+                  }),
+                  small: PropTypes.shape({
+                    ext: PropTypes.string,
+                    url: PropTypes.string,
+                    mime: PropTypes.string,
+                    width: PropTypes.number,
+                    height: PropTypes.number,
+                  }),
+                  thumbnail: PropTypes.shape({
+                    ext: PropTypes.string,
+                    url: PropTypes.string,
+                    mime: PropTypes.string,
+                    width: PropTypes.number,
+                    height: PropTypes.number,
+                  }),
+                }),
+                url: PropTypes.string,
+                createdAt: PropTypes.string,
+                updatedAt: PropTypes.string,
+                publishedAt: PropTypes.string,
+              }),
+            })
+          ),
+        }),
+      }).isRequired,
     })
   ).isRequired,
 };
+
 export default Information;

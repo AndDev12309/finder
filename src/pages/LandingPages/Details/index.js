@@ -19,15 +19,18 @@ function DetailsPage({ item, type }) {
   const autenticate = useAuth();
   const navigate = useNavigate();
   const [isRescued, setIsRescued] = useState(false);
-  const images = item.photos?.map(
-    (photo) => `${process.env.REACT_APP_API_HOST_URL}${photo.formats?.medium?.url || photo.url}`
+  const images = item.attributes.photos?.data?.map(
+    (photo) =>
+      `${process.env.REACT_APP_API_HOST_URL}${
+        photo.attributes.formats?.medium?.url || photo.attributes.url
+      }`
   ) || ["path/to/default/image.jpg"];
 
   const [currentImage, setCurrentImage] = useState(0);
   const [isContactModalOpen, setContactModalOpen] = useState(false);
 
   useEffect(() => {
-    if (item && item.state === "Rescued") {
+    if (item && item.attributes.state === "Rescued") {
       setIsRescued(true);
     }
   }, [item]);
@@ -47,15 +50,41 @@ function DetailsPage({ item, type }) {
   };
 
   const handleSendEmail = async (data) => {
-    console.log("Enviando correo con los datos:", data);
-    alert("Correo enviado con éxito.");
+    if (!item || !item.attributes.user || !item.attributes.user.data) {
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append("email", item.attributes.user.data.attributes.email);
+      formData.append("replyTo", data.email);
+      formData.append("subject", data.subject);
+      formData.append("text", data.message);
+      formData.append("html", data.message);
+
+      if (data.files.length > 0) {
+        data.files.forEach((file) => {
+          formData.append("files", file);
+        });
+      }
+
+      const response = await API.post("/email/send-email", formData);
+      if (response.status === 200) {
+        alert("Correo enviado exitosamente");
+      } else {
+        console.error("Error al enviar el correo");
+      }
+    } catch (error) {
+      alert(error.response?.data?.error?.message || "Error al enviar el correo");
+    }
   };
 
   const handleMarkAsRescued = async () => {
     try {
       const response = await API.put(
-        item.name ? `/losts/${item.documentId}` : `/founds/${item.documentId}`,
-        { data: { state: "Rescued" } }
+        item.attributes.name ? `/losts/${item.id}` : `/founds/${item.id}`,
+        {
+          data: { state: "Rescued" },
+        }
       );
       if (response.status === 200 || response.status === 201) {
         setIsRescued(true);
@@ -69,31 +98,46 @@ function DetailsPage({ item, type }) {
   };
 
   const handleEdit = () => {
-    return navigate(`/edit-lost/${item.documentId}`);
+    return navigate(`/edit-lost/${item.id}`);
   };
 
   const isLost = type === "lost";
 
   return (
     <>
-      <DefaultNavbar
-        routes={routesPrivate}
-        action={[
-          {
-            type: "internal",
-            route: "/me-publishes",
-            label: "Mis publicaciones",
-            color: "primary",
-          },
-          {
-            type: "internal",
-            route: "/logout",
-            label: "Cerrar Sesion",
-            color: "info",
-          },
-        ]}
-        sticky
-      />
+      {autenticate.isAuthenticated ? (
+        <DefaultNavbar
+          routes={routesPrivate}
+          action={[
+            {
+              type: "internal",
+              route: "/me-publishes",
+              label: "Mis publicaciones",
+              color: "primary",
+            },
+            {
+              type: "internal",
+              route: "/logout",
+              label: "Cerrar Sesion",
+              color: "info",
+            },
+          ]}
+          sticky
+        />
+      ) : (
+        <DefaultNavbar
+          routes={routesPrivate}
+          action={[
+            {
+              type: "internal",
+              route: "/logout",
+              label: "Cerrar Sesion",
+              color: "info",
+            },
+          ]}
+          sticky
+        />
+      )}
       <MKBox
         minHeight="75vh"
         width="100%"
@@ -158,42 +202,86 @@ function DetailsPage({ item, type }) {
                 </Slider>
               </Box>
               <CardContent>
-                <Typography variant="h4" gutterBottom>
-                  {item.name || (isLost ? "Sin Nombre" : "Sin Identificación")}
-                </Typography>
+                ;
+                <Box sx={{ padding: 2 }}>
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" },
+                      marginBottom: 2,
+                      textAlign: { xs: "center", sm: "left" },
+                    }}
+                  >
+                    {item.attributes.name || (isLost ? "Sin Nombre" : "Sin Identificación")}
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: { xs: "column", sm: "row" },
+                      alignItems: { xs: "center", sm: "flex-start" },
+                      gap: 1,
+                    }}
+                  >
+                    <Typography
+                      variant="h4"
+                      sx={{
+                        fontSize: { xs: "1rem", sm: "1.25rem" },
+                        textAlign: { xs: "center", sm: "left" },
+                      }}
+                    >
+                      {isLost ? "Familiar: " : "Responsable: "}
+                    </Typography>
+
+                    <Typography
+                      variant="h4"
+                      sx={{
+                        fontSize: { xs: "1rem", sm: "1.25rem" },
+                        marginLeft: { sm: 2 },
+                        textAlign: { xs: "center", sm: "left" },
+                      }}
+                    >
+                      {item.attributes.user
+                        ? ` ${item.attributes.user.data.attributes.username} / ${item.attributes.user.data.attributes.email}`
+                        : " Sin Responsable"}
+                    </Typography>
+                  </Box>
+                </Box>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body1">
-                      <strong>Especie:</strong> {item.species || "No especificada"}
+                      <strong>Especie:</strong> {item.attributes.species || "No especificada"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body1">
-                      <strong>Raza:</strong> {item.breed || "No especificada"}
+                      <strong>Raza:</strong> {item.attributes.breed || "No especificada"}
                     </Typography>
                   </Grid>
                   {isLost && (
                     <Grid item xs={12} sm={6}>
                       <Typography variant="body1">
-                        <strong>Edad:</strong> {item.age || "Desconocida"}
+                        <strong>Edad:</strong> {item.attributes.age || "Desconocida"}
                       </Typography>
                     </Grid>
                   )}
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body1">
-                      <strong>Color:</strong> {item.color || "No especificado"}
+                      <strong>Color:</strong> {item.attributes.color || "No especificado"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="body1">
                       <strong>Ubicación:</strong>{" "}
-                      {isLost ? item.last_seen_location : item.found_location || "No disponible"}
+                      {isLost
+                        ? item.attributes.last_seen_location
+                        : item.attributes.found_location || "No disponible"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="body1">
                       <strong>Estado:</strong>{" "}
-                      {item.state === (isLost ? "Lost" : "Found")
+                      {item.attributes.state === (isLost ? "Lost" : "Found")
                         ? isLost
                           ? "Extraviado"
                           : "Encontrado"
@@ -204,13 +292,14 @@ function DetailsPage({ item, type }) {
                     <Typography variant="body1">
                       <strong>Fecha:</strong>{" "}
                       {new Date(
-                        isLost ? item.date_reported : item.date_found
+                        isLost ? item.attributes.date_reported : item.attributes.date_found
                       ).toLocaleDateString() || "Desconocida"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="body1">
-                      <strong>Descripción:</strong> {item.description || "Sin descripción"}
+                      <strong>Descripción:</strong>{" "}
+                      {item.attributes.description || "Sin descripción"}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -223,16 +312,21 @@ function DetailsPage({ item, type }) {
                     justifyContent: "center",
                   }}
                 >
-                  {autenticate.isAuthenticated && item.state !== "Rescued" && !isRescued && (
-                    <>
-                      <MKButton variant="contained" color="success" onClick={handleMarkAsRescued}>
-                        Marcar como Rescatado
-                      </MKButton>
-                      <MKButton variant="gradient" color="info" onClick={handleEdit}>
-                        Editar
-                      </MKButton>
-                    </>
-                  )}
+                  {autenticate.isAuthenticated &&
+                    item.attributes.state !== "Rescued" &&
+                    !isRescued &&
+                    item.attributes.user &&
+                    item.attributes.user.data &&
+                    autenticate.currentUser.id === item.attributes.user.data.id && (
+                      <>
+                        <MKButton variant="contained" color="success" onClick={handleMarkAsRescued}>
+                          Marcar como Rescatado
+                        </MKButton>
+                        <MKButton variant="gradient" color="info" onClick={handleEdit}>
+                          Editar
+                        </MKButton>
+                      </>
+                    )}
                   <MKButton
                     variant="gradient"
                     color="info"
@@ -241,15 +335,17 @@ function DetailsPage({ item, type }) {
                   >
                     Volver a la lista
                   </MKButton>
-                  {!autenticate.isAuthenticated && (
-                    <MKButton
-                      variant="contained"
-                      color="success"
-                      onClick={() => setContactModalOpen(true)}
-                    >
-                      Contactar
-                    </MKButton>
-                  )}
+                  {item.attributes.state !== "Rescued" &&
+                    !isRescued &&
+                    autenticate?.currentUser?.id !== item.attributes.user?.data?.id && (
+                      <MKButton
+                        variant="contained"
+                        color="success"
+                        onClick={() => setContactModalOpen(true)}
+                      >
+                        Contactar
+                      </MKButton>
+                    )}
                 </Box>
               </CardContent>
             </Card>
@@ -268,32 +364,96 @@ function DetailsPage({ item, type }) {
 
 DetailsPage.propTypes = {
   item: PropTypes.shape({
-    id: PropTypes.number,
-    documentId: PropTypes.string,
-    name: PropTypes.string,
-    species: PropTypes.string,
-    breed: PropTypes.string,
-    age: PropTypes.number,
-    color: PropTypes.string,
-    description: PropTypes.string,
-    last_seen_location: PropTypes.string,
-    found_location: PropTypes.string,
-    state: PropTypes.string,
-    date_reported: PropTypes.string,
-    date_found: PropTypes.string,
-    photos: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        formats: PropTypes.shape({
-          medium: PropTypes.shape({
-            url: PropTypes.string,
+    id: PropTypes.number.isRequired,
+    attributes: PropTypes.shape({
+      name: PropTypes.string,
+      species: PropTypes.string,
+      breed: PropTypes.string,
+      color: PropTypes.string,
+      age: PropTypes.number,
+      description: PropTypes.string,
+      last_seen_location: PropTypes.string,
+      found_location: PropTypes.string,
+      state: PropTypes.string,
+      date_reported: PropTypes.string,
+      date_found: PropTypes.string,
+      createdAt: PropTypes.string,
+      updatedAt: PropTypes.string,
+      publishedAt: PropTypes.string,
+      photos: PropTypes.shape({
+        data: PropTypes.arrayOf(
+          PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            attributes: PropTypes.shape({
+              name: PropTypes.string,
+              alternativeText: PropTypes.string,
+              caption: PropTypes.string,
+              width: PropTypes.number,
+              height: PropTypes.number,
+              formats: PropTypes.shape({
+                small: PropTypes.shape({
+                  ext: PropTypes.string,
+                  url: PropTypes.string,
+                  hash: PropTypes.string,
+                  mime: PropTypes.string,
+                  name: PropTypes.string,
+                  path: PropTypes.string,
+                  size: PropTypes.number,
+                  width: PropTypes.number,
+                  height: PropTypes.number,
+                  sizeInBytes: PropTypes.number,
+                }),
+                medium: PropTypes.shape({
+                  ext: PropTypes.string,
+                  url: PropTypes.string,
+                  hash: PropTypes.string,
+                  mime: PropTypes.string,
+                  name: PropTypes.string,
+                  path: PropTypes.string,
+                  size: PropTypes.number,
+                  width: PropTypes.number,
+                  height: PropTypes.number,
+                  sizeInBytes: PropTypes.number,
+                }),
+                thumbnail: PropTypes.shape({
+                  ext: PropTypes.string,
+                  url: PropTypes.string,
+                  hash: PropTypes.string,
+                  mime: PropTypes.string,
+                  name: PropTypes.string,
+                  path: PropTypes.string,
+                  size: PropTypes.number,
+                  width: PropTypes.number,
+                  height: PropTypes.number,
+                  sizeInBytes: PropTypes.number,
+                }),
+              }),
+              hash: PropTypes.string,
+              ext: PropTypes.string,
+              mime: PropTypes.string,
+              size: PropTypes.number,
+              url: PropTypes.string,
+              previewUrl: PropTypes.string,
+              provider: PropTypes.string,
+              provider_metadata: PropTypes.object,
+              createdAt: PropTypes.string,
+              updatedAt: PropTypes.string,
+            }).isRequired,
+          }).isRequired
+        ),
+      }),
+      user: PropTypes.shape({
+        data: PropTypes.shape({
+          id: PropTypes.number,
+          attributes: PropTypes.shape({
+            username: PropTypes.string,
+            email: PropTypes.string,
           }),
         }),
-        url: PropTypes.string,
-      })
-    ),
+      }),
+    }).isRequired,
   }).isRequired,
-  type: PropTypes.oneOf(["lost", "found"]),
+  type: PropTypes.oneOf(["lost", "found"]).isRequired,
 };
 
 export default DetailsPage;

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 function DetailsLost({ id }) {
   const [idlost, setIdLost] = useState(null);
   const lost = useLost(idlost, {
-    populate: { photos: true },
+    populate: { photos: true, user: true },
   });
 
   useEffect(() => {

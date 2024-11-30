@@ -22,14 +22,14 @@ const LostForm = ({ item }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: item?.name || "",
-      species: item?.species || "",
-      breed: item?.breed || "",
-      age: item?.age || "",
-      color: item?.color || "",
-      description: item?.description || "",
-      last_seen_location: item?.last_seen_location || "",
-      date_reported: item?.date_reported || "",
+      name: item?.attributes.name || "",
+      species: item?.attributes.species || "",
+      breed: item?.attributes.breed || "",
+      age: item?.attributes.age || "",
+      color: item?.attributes.color || "",
+      description: item?.attributes.description || "",
+      last_seen_location: item?.attributes.last_seen_location || "",
+      date_reported: item?.attributes.date_reported || "",
       photos: [],
     },
   });
@@ -37,11 +37,13 @@ const LostForm = ({ item }) => {
   const [imagePreviews, setImagePreviews] = useState([]);
 
   useEffect(() => {
-    if (item?.photos) {
+    if (item?.attributes.photos?.data) {
       setImagePreviews(
-        item.photos.map(
+        item.attributes.photos.data.map(
           (photo) =>
-            `${process.env.REACT_APP_API_HOST_URL}${photo.formats?.medium?.url || photo.url}`
+            `${process.env.REACT_APP_API_HOST_URL}${
+              photo.attributes.formats?.medium?.url || photo.attributes.url
+            }`
         )
       );
     }
@@ -58,7 +60,7 @@ const LostForm = ({ item }) => {
     try {
       // const uploadResponse = await API.post("/upload", formData);
 
-      let photoIds = item?.photos?.map((photo) => photo.id) || [];
+      let photoIds = item?.attributes.photos?.data?.map((photo) => photo.id) || [];
       if (formData.has("files")) {
         const uploadResponse = await API.post("/upload", formData);
         photoIds = [...photoIds, ...uploadResponse.data.map((file) => file.id)];
@@ -74,11 +76,12 @@ const LostForm = ({ item }) => {
           last_seen_location: data.last_seen_location,
           date_reported: data.date_reported,
           photos: photoIds,
+          publishedAt: null,
           user: autenticate.currentUser.id,
         },
       };
       const response = item
-        ? await API.put(`/losts/${item.documentId}`, requestData) // Actualizar si existe el `item`
+        ? await API.put(`/losts/${item.id}`, requestData) // Actualizar si existe el `item`
         : await API.post("/losts", requestData);
 
       // const response = await API.post("/losts", {
@@ -346,7 +349,9 @@ const LostForm = ({ item }) => {
                   control={control}
                   rules={{
                     validate: (value) =>
-                      value.length > 0 || item || "Debes subir al menos una imagen",
+                      value.length > 0 ||
+                      item?.attributes.photos?.data ||
+                      "Debes subir al menos una imagen",
                   }}
                   render={({ field }) => (
                     <FormControl fullWidth>
@@ -447,28 +452,33 @@ const LostForm = ({ item }) => {
 
 LostForm.propTypes = {
   item: PropTypes.shape({
-    id: PropTypes.number,
-    documentId: PropTypes.string,
-    name: PropTypes.string,
-    species: PropTypes.string,
-    breed: PropTypes.string,
-    age: PropTypes.number,
-    color: PropTypes.string,
-    description: PropTypes.string,
-    last_seen_location: PropTypes.string,
-    state: PropTypes.string,
-    date_reported: PropTypes.string,
-    photos: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        formats: PropTypes.shape({
-          medium: PropTypes.shape({
-            url: PropTypes.string,
-          }),
-        }),
-        url: PropTypes.string,
-      })
-    ),
+    id: PropTypes.number.isRequired,
+    attributes: PropTypes.shape({
+      name: PropTypes.string,
+      species: PropTypes.string,
+      breed: PropTypes.string,
+      age: PropTypes.number,
+      color: PropTypes.string,
+      description: PropTypes.string,
+      last_seen_location: PropTypes.string,
+      state: PropTypes.string,
+      date_reported: PropTypes.string,
+      photos: PropTypes.shape({
+        data: PropTypes.arrayOf(
+          PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            attributes: PropTypes.shape({
+              formats: PropTypes.shape({
+                medium: PropTypes.shape({
+                  url: PropTypes.string,
+                }),
+              }),
+              url: PropTypes.string,
+            }).isRequired,
+          }).isRequired
+        ),
+      }),
+    }).isRequired,
   }).isRequired,
   type: PropTypes.oneOf(["lost", "found"]),
 };
