@@ -29,7 +29,7 @@ function Contact({ open, onClose, onSend }) {
     },
   });
 
-  const [editorContent, setEditorContent] = useState("");
+  const [editorContent, setEditorContent] = useState();
   const [files, setFiles] = useState([]);
 
   const onSubmit = async (data) => {
@@ -47,6 +47,13 @@ function Contact({ open, onClose, onSend }) {
     } finally {
       console.error("Error al enviar el correo", error);
     }
+  };
+
+  const handleContentChange = (content) => {
+    const parsedContent = JSON.parse(content);
+    const text = parsedContent.blocks.map((block) => block.text).join("\n");
+    const html = "<p>" + text.replace(/\n/g, "<br/>") + "</p>";
+    setEditorContent({ text, html });
   };
 
   return (
@@ -108,8 +115,7 @@ function Contact({ open, onClose, onSend }) {
           </Grid>
           <Grid item xs={12}>
             <RichTextEditor
-              value={editorContent}
-              onContentChange={(content) => setEditorContent(content)}
+              onContentChange={handleContentChange}
               onFilesChange={(selectedFiles) => setFiles(selectedFiles)}
             />
           </Grid>

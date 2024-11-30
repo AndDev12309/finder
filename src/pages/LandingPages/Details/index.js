@@ -53,13 +53,17 @@ function DetailsPage({ item, type }) {
     if (!item || !item.attributes.user || !item.attributes.user.data) {
       return;
     }
+    if (!data.message) {
+      alert("No se puede enviar un correo vació");
+    }
+
     try {
       const formData = new FormData();
       formData.append("email", item.attributes.user.data.attributes.email);
       formData.append("replyTo", data.email);
       formData.append("subject", data.subject);
-      formData.append("text", data.message);
-      formData.append("html", data.message);
+      formData.append("text", data.message?.text);
+      formData.append("html", data.message?.html);
 
       if (data.files.length > 0) {
         data.files.forEach((file) => {
