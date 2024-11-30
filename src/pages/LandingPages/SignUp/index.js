@@ -56,6 +56,7 @@ function SignUpBasic() {
       //   setAuthenticated(true);
       // }
       if (response.data.user) {
+        reset();
         alert(
           "¡Correo de confirmación enviado! Por favor, revisa tu bandeja de entrada para verificar tu cuenta."
         );
