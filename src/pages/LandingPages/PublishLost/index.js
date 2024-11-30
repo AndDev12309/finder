@@ -2,13 +2,19 @@ import { PhotoCamera } from "@mui/icons-material";
 import { Box, Button, Container, FormControl, Grid, TextField, Typography } from "@mui/material";
 import huellasImge from "assets/images/huellasPets.jpeg";
 import MKBox from "components/MKBox";
-import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
+import API from "data";
 import withAuth from "hocs/withAuth";
-import { useState } from "react";
+import DefaultNavbar from "layouts/pages/shared/Navbars/DefaultNavbar";
+import PropTypes from "prop-types";
+import { useAuth } from "providers/Auth";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { routesPrivate } from "routes";
 
-const LostForm = () => {
+const LostForm = ({ item }) => {
+  const autenticate = useAuth();
+  const navigate = useNavigate();
   const {
     handleSubmit,
     control,
@@ -16,29 +22,94 @@ const LostForm = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "",
-      species: "",
-      breed: "",
-      age: "",
-      color: "",
-      description: "",
-      last_seen_location: "",
-      date_reported: "",
+      name: item?.name || "",
+      species: item?.species || "",
+      breed: item?.breed || "",
+      age: item?.age || "",
+      color: item?.color || "",
+      description: item?.description || "",
+      last_seen_location: item?.last_seen_location || "",
+      date_reported: item?.date_reported || "",
       photos: [],
     },
   });
 
   const [imagePreviews, setImagePreviews] = useState([]);
 
-  const onSubmit = (data) => {
-    console.log("Datos enviados:", data);
+  useEffect(() => {
+    if (item?.photos) {
+      setImagePreviews(
+        item.photos.map(
+          (photo) =>
+            `${process.env.REACT_APP_API_HOST_URL}${photo.formats?.medium?.url || photo.url}`
+        )
+      );
+    }
+  }, [item]);
+
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    data.photos.forEach((photo) => {
+      if (photo instanceof File) {
+        formData.append("files", photo);
+      }
+    });
+
+    try {
+      // const uploadResponse = await API.post("/upload", formData);
+
+      let photoIds = item?.photos?.map((photo) => photo.id) || [];
+      if (formData.has("files")) {
+        const uploadResponse = await API.post("/upload", formData);
+        photoIds = [...photoIds, ...uploadResponse.data.map((file) => file.id)];
+      }
+      const requestData = {
+        data: {
+          name: data.name,
+          species: data.species,
+          breed: data.breed,
+          age: data.age,
+          color: data.color,
+          description: data.description,
+          last_seen_location: data.last_seen_location,
+          date_reported: data.date_reported,
+          photos: photoIds,
+          user: autenticate.currentUser.id,
+        },
+      };
+      const response = item
+        ? await API.put(`/losts/${item.documentId}`, requestData) // Actualizar si existe el `item`
+        : await API.post("/losts", requestData);
+
+      // const response = await API.post("/losts", {
+      //   data: {
+      //     name: data.name,
+      //     species: data.species,
+      //     breed: data.breed,
+      //     age: data.age,
+      //     color: data.color,
+      //     description: data.description,
+      //     last_seen_location: data.last_seen_location,
+      //     date_reported: data.date_reported,
+      //     photos: photoIds,
+      //     user: autenticate.currentUser.id,
+      //     // publishedAt: null,
+      //     // status: null,
+      //   },
+      // });
+      if (response.status === 200 || response.status === 201) {
+        return navigate("/");
+      }
+    } catch (e) {
+      alert("Por favor intente en unos minutos");
+    }
   };
 
   const handleFileChange = async (e, field) => {
     const files = Array.from(e.target.files);
     const maxFileSize = 5 * 1024 * 1024; // 5 MB
-    const minWidth = 800; // Ancho mínimo en píxeles
-    const minHeight = 800; // Alto mínimo en píxeles
+    const minWidth = 500; // Ancho mínimo en píxeles
+    const minHeight = 500; // Alto mínimo en píxeles
 
     const validFiles = [];
     const errors = [];
@@ -257,7 +328,7 @@ const LostForm = () => {
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      label="Fecha de perdida"
+                      label="Fecha de pérdida"
                       type="date"
                       fullWidth
                       error={!!errors.date_reported}
@@ -274,7 +345,8 @@ const LostForm = () => {
                   name="photos"
                   control={control}
                   rules={{
-                    validate: (value) => value.length > 0 || "Debes subir al menos una imagen",
+                    validate: (value) =>
+                      value.length > 0 || item || "Debes subir al menos una imagen",
                   }}
                   render={({ field }) => (
                     <FormControl fullWidth>
@@ -363,7 +435,7 @@ const LostForm = () => {
                   },
                 }}
               >
-                Quiero Ayuda
+                {item ? "Actualizar" : "Quiero Ayuda"}
               </Button>
             </Box>
           </Box>
@@ -371,6 +443,34 @@ const LostForm = () => {
       </MKBox>
     </>
   );
+};
+
+LostForm.propTypes = {
+  item: PropTypes.shape({
+    id: PropTypes.number,
+    documentId: PropTypes.string,
+    name: PropTypes.string,
+    species: PropTypes.string,
+    breed: PropTypes.string,
+    age: PropTypes.number,
+    color: PropTypes.string,
+    description: PropTypes.string,
+    last_seen_location: PropTypes.string,
+    state: PropTypes.string,
+    date_reported: PropTypes.string,
+    photos: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number,
+        formats: PropTypes.shape({
+          medium: PropTypes.shape({
+            url: PropTypes.string,
+          }),
+        }),
+        url: PropTypes.string,
+      })
+    ),
+  }).isRequired,
+  type: PropTypes.oneOf(["lost", "found"]),
 };
 
 export default withAuth(LostForm);

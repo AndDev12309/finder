@@ -11,13 +11,16 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "assets/theme";
 
 // Material Kit 2 React routes
-import { AuthProvider } from "providers/Auth";
-import routes from "routes";
-import DetailPage from "layouts/pages/landing-pages/details";
-import PresentationPage from "layouts/pages/presentation";
+import LogoutPage from "layouts/pages/authentication/logout";
 import SignInPage from "layouts/pages/authentication/sign-in";
 import SignUpPage from "layouts/pages/authentication/sign-up";
-import LogoutPage from "layouts/pages/authentication/logout";
+import DetailPage from "layouts/pages/landing-pages/details";
+import PublishPage from "layouts/pages/landing-pages/publish";
+import PublsihesPage from "layouts/pages/landing-pages/publishes";
+import PresentationPage from "layouts/pages/presentation";
+import { AuthProvider } from "providers/Auth";
+import routes from "routes";
+import PublishhPage from "layouts/pages/landing-pages/publishh";
 
 export default function App() {
   const { pathname } = useLocation();
@@ -57,6 +60,10 @@ export default function App() {
           <Route path="/lost/:id" element={<DetailPage action="lost" />} />
           <Route path="/found/:id" element={<DetailPage action="found" />} />
           <Route path="*" element={<Navigate to="/pets" />} />
+
+          <Route path="/me-publishes" element={<PublsihesPage to="/pets" />} />
+          <Route path="/edit-lost/:id" element={<PublishPage />} />
+          <Route path="/edit-found/:id" element={<PublishhPage />} />
         </Routes>
       </AuthProvider>
     </ThemeProvider>

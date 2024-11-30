@@ -16,7 +16,6 @@ import Counters from "pages/Presentation/sections/Counters";
 import Information from "pages/Presentation/sections/Information";
 import Informationn from "pages/Presentation/sections/Informationn";
 import Informationnn from "pages/Presentation/sections/Informationnn";
-import Testimonials from "pages/Presentation/sections/Testimonials";
 
 // Presentation page components
 
@@ -36,9 +35,8 @@ import { useEffect, useState } from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import { useAuth } from "providers/Auth";
-import { routesPublic } from "routes";
+import { routesPrivate, routesPublic } from "routes";
 import Header from "./sections/Header";
-import { routesPrivate } from "routes";
 
 function Presentation() {
   const autenticate = useAuth();
@@ -135,7 +133,6 @@ function Presentation() {
       setSearchFoundDelay(searchFound);
       setSearchRescuedDelay(searchRescued);
     }, delay);
-    console.log(searchRescuedDelay);
 
     return () => {
       clearTimeout(handler);
@@ -177,12 +174,20 @@ function Presentation() {
       {autenticate.isAuthenticated ? (
         <DefaultNavbar
           routes={routesPrivate}
-          action={{
-            type: "internal",
-            route: "/logout",
-            label: "Cerrar Sesion",
-            color: "info",
-          }}
+          action={[
+            {
+              type: "internal",
+              route: "/me-publishes",
+              label: "Mis publicaciones",
+              color: "primary",
+            },
+            {
+              type: "internal",
+              route: "/logout",
+              label: "Cerrar Sesion",
+              color: "info",
+            },
+          ]}
           sticky
         />
       ) : (
@@ -397,7 +402,6 @@ function Presentation() {
           </Container>
         </MKBox>
         <Informationnn cardFounds={cardFoundRescueds} cardLosts={cardLostRescueds} />
-        <Testimonials />
       </Card>
       <MKBox pt={6} px={1} mt={6}>
         <DefaultFooter content={footerRoutes} />
