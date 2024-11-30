@@ -22,32 +22,32 @@ function Informationn({ cardFounds }) {
       <Container>
         <Slider {...settings}>
           {cardFounds.map((found) => {
-            const frontImage =
-              found.photos && found.photos[0]
-                ? `${process.env.REACT_APP_API_HOST_URL}${
-                    found.photos[0].formats?.medium?.url || found.photos[0].url
-                  }`
-                : "path/to/default/image.jpg";
-            const backImage =
-              found.photos && found.photos[1]
-                ? `${process.env.REACT_APP_API_HOST_URL}${
-                    found.photos[1].formats?.medium?.url || found.photos[1].url
-                  }`
-                : frontImage;
+            const attributes = found.attributes || {};
+            const photos = attributes.photos?.data || [];
+            const frontImage = photos[0]?.attributes
+              ? `${process.env.REACT_APP_API_HOST_URL}${
+                  photos[0].attributes.formats?.medium?.url || photos[0].attributes.url
+                }`
+              : "path/to/default/image.jpg";
+            const backImage = photos[1]?.attributes
+              ? `${process.env.REACT_APP_API_HOST_URL}${
+                  photos[1].attributes.formats?.medium?.url || photos[1].attributes.url
+                }`
+              : frontImage;
             return (
               <Grid item xs={12} lg={3} sx={{ mx: "auto" }} key={found.id}>
                 <RotatingCard>
                   <RotatingCardFront
                     image={frontImage}
                     icon="pets"
-                    title={found.species}
-                    description={`${found.breed}, ${found.color}`}
+                    title={attributes.species}
+                    description={`${attributes.breed}, ${attributes.color}`}
                     color="primary"
                   />
                   <RotatingCardBack
                     image={backImage}
-                    title={found.found_location}
-                    description={found.description}
+                    title={attributes.found_location}
+                    description={attributes.description}
                     action={{
                       type: "internal",
                       route: `/found/${found.id}`,
@@ -67,61 +67,67 @@ Informationn.propTypes = {
   cardFounds: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-
-      species: PropTypes.string.isRequired,
-      breed: PropTypes.string,
-      color: PropTypes.string,
-      description: PropTypes.string,
-      found_location: PropTypes.string,
-      state: PropTypes.string,
-      createdAt: PropTypes.string,
-      updatedAt: PropTypes.string,
-      publishedAt: PropTypes.string,
-      photos: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.number,
-          name: PropTypes.string,
-          alternativeText: PropTypes.string,
-          caption: PropTypes.string,
-          width: PropTypes.number,
-          height: PropTypes.number,
-          formats: PropTypes.shape({
-            large: PropTypes.shape({
-              ext: PropTypes.string,
-              url: PropTypes.string.isRequired,
-              mime: PropTypes.string,
-              width: PropTypes.number,
-              height: PropTypes.number,
-            }),
-            medium: PropTypes.shape({
-              ext: PropTypes.string,
-              url: PropTypes.string,
-              mime: PropTypes.string,
-              width: PropTypes.number,
-              height: PropTypes.number,
-            }),
-            small: PropTypes.shape({
-              ext: PropTypes.string,
-              url: PropTypes.string,
-              mime: PropTypes.string,
-              width: PropTypes.number,
-              height: PropTypes.number,
-            }),
-            thumbnail: PropTypes.shape({
-              ext: PropTypes.string,
-              url: PropTypes.string,
-              mime: PropTypes.string,
-              width: PropTypes.number,
-              height: PropTypes.number,
-            }),
-          }),
-          url: PropTypes.string,
-          createdAt: PropTypes.string,
-          updatedAt: PropTypes.string,
-          publishedAt: PropTypes.string,
-        })
-      ),
+      attributes: PropTypes.shape({
+        species: PropTypes.string.isRequired,
+        breed: PropTypes.string,
+        color: PropTypes.string,
+        description: PropTypes.string,
+        found_location: PropTypes.string,
+        state: PropTypes.string,
+        createdAt: PropTypes.string,
+        updatedAt: PropTypes.string,
+        publishedAt: PropTypes.string,
+        photos: PropTypes.shape({
+          data: PropTypes.arrayOf(
+            PropTypes.shape({
+              id: PropTypes.number,
+              attributes: PropTypes.shape({
+                name: PropTypes.string,
+                alternativeText: PropTypes.string,
+                caption: PropTypes.string,
+                width: PropTypes.number,
+                height: PropTypes.number,
+                formats: PropTypes.shape({
+                  large: PropTypes.shape({
+                    ext: PropTypes.string,
+                    url: PropTypes.string.isRequired,
+                    mime: PropTypes.string,
+                    width: PropTypes.number,
+                    height: PropTypes.number,
+                  }),
+                  medium: PropTypes.shape({
+                    ext: PropTypes.string,
+                    url: PropTypes.string,
+                    mime: PropTypes.string,
+                    width: PropTypes.number,
+                    height: PropTypes.number,
+                  }),
+                  small: PropTypes.shape({
+                    ext: PropTypes.string,
+                    url: PropTypes.string,
+                    mime: PropTypes.string,
+                    width: PropTypes.number,
+                    height: PropTypes.number,
+                  }),
+                  thumbnail: PropTypes.shape({
+                    ext: PropTypes.string,
+                    url: PropTypes.string,
+                    mime: PropTypes.string,
+                    width: PropTypes.number,
+                    height: PropTypes.number,
+                  }),
+                }),
+                url: PropTypes.string,
+                createdAt: PropTypes.string,
+                updatedAt: PropTypes.string,
+                publishedAt: PropTypes.string,
+              }),
+            })
+          ),
+        }),
+      }).isRequired,
     })
   ).isRequired,
 };
+
 export default Informationn;

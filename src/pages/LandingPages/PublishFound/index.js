@@ -22,22 +22,24 @@ const FoundForm = ({ item }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      species: item?.species || "",
-      breed: item?.breed || "",
-      color: item?.color || "",
-      description: item?.description || "",
-      found_location: item?.found_location || "",
-      date_found: item?.date_found || "",
+      species: item?.attributes.species || "",
+      breed: item?.attributes.breed || "",
+      color: item?.attributes.color || "",
+      description: item?.attributes.description || "",
+      found_location: item?.attributes.found_location || "",
+      date_found: item?.attributes.date_found || "",
       photos: [],
     },
   });
 
   useEffect(() => {
-    if (item?.photos) {
+    if (item?.attributes.photos?.data) {
       setImagePreviews(
-        item.photos.map(
+        item.attributes.photos.data.map(
           (photo) =>
-            `${process.env.REACT_APP_API_HOST_URL}${photo.formats?.medium?.url || photo.url}`
+            `${process.env.REACT_APP_API_HOST_URL}${
+              photo.attributes.formats?.medium?.url || photo.attributes.url
+            }`
         )
       );
     }
@@ -59,7 +61,7 @@ const FoundForm = ({ item }) => {
 
       // const photoIds = uploadResponse.data.map((file) => file.id);
 
-      let photoIds = item?.photos?.map((photo) => photo.id) || [];
+      let photoIds = item?.attributes.photos?.data?.map((photo) => photo.id) || [];
       if (formData.has("files")) {
         const uploadResponse = await API.post("/upload", formData);
         photoIds = [...photoIds, ...uploadResponse.data.map((file) => file.id)];
@@ -303,7 +305,9 @@ const FoundForm = ({ item }) => {
                   control={control}
                   rules={{
                     validate: (value) =>
-                      value.length > 0 || item || "Debes subir al menos una imagen",
+                      value.length > 0 ||
+                      item?.attributes.photos?.data ||
+                      "Debes subir al menos una imagen",
                   }}
                   render={({ field }) => (
                     <FormControl fullWidth>
@@ -404,25 +408,31 @@ const FoundForm = ({ item }) => {
 
 FoundForm.propTypes = {
   item: PropTypes.shape({
-    id: PropTypes.number,
-    species: PropTypes.string,
-    breed: PropTypes.string,
-    color: PropTypes.string,
-    description: PropTypes.string,
-    found_location: PropTypes.string,
-    state: PropTypes.string,
-    date_found: PropTypes.string,
-    photos: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        formats: PropTypes.shape({
-          medium: PropTypes.shape({
-            url: PropTypes.string,
-          }),
-        }),
-        url: PropTypes.string,
-      })
-    ),
+    id: PropTypes.number.isRequired,
+    attributes: PropTypes.shape({
+      species: PropTypes.string,
+      breed: PropTypes.string,
+      color: PropTypes.string,
+      description: PropTypes.string,
+      found_location: PropTypes.string,
+      state: PropTypes.string,
+      date_found: PropTypes.string,
+      photos: PropTypes.shape({
+        data: PropTypes.arrayOf(
+          PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            attributes: PropTypes.shape({
+              formats: PropTypes.shape({
+                medium: PropTypes.shape({
+                  url: PropTypes.string,
+                }),
+              }),
+              url: PropTypes.string,
+            }).isRequired,
+          }).isRequired
+        ),
+      }),
+    }).isRequired,
   }).isRequired,
   type: PropTypes.oneOf(["lost", "found"]),
 };

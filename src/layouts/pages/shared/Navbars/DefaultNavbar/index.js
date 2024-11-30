@@ -26,6 +26,9 @@ import DefaultNavbarMobile from "layouts/pages/shared/Navbars/DefaultNavbar/Defa
 
 // Material Kit 2 React base styles
 import breakpoints from "assets/theme/base/breakpoints";
+import { useAuth } from "providers/Auth";
+import helpImg from "assets/images/helpFind.jpeg";
+import MKAvatar from "components/MKAvatar";
 
 function DefaultNavbar({ brand, routes, transparent, light, action, sticky, relative, center }) {
   const [dropdown, setDropdown] = useState("");
@@ -39,6 +42,9 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
   const [mobileView, setMobileView] = useState(false);
 
   const openMobileNavbar = () => setMobileNavbar(!mobileNavbar);
+
+  const autenticate = useAuth(); // Obtén el estado de autenticación
+  const userName = autenticate?.currentUser?.username || "Usuario";
 
   useEffect(() => {
     // A function that sets the display state for the DefaultNavbarMobile.
@@ -472,71 +478,89 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
           >
             {renderNavbarItems}
           </MKBox>
-          <MKBox ml={{ xs: "auto", lg: 0 }}>
-            {Array.isArray(action)
-              ? action.map((act, index) =>
-                  act.type === "internal" ? (
+          <MKBox display="flex" alignItems="center" gap={2}>
+            <MKBox ml={{ xs: "auto", lg: 0 }}>
+              {Array.isArray(action)
+                ? action.map((act, index) =>
+                    act.type === "internal" ? (
+                      <MKButton
+                        sx={{ mx: 1 }}
+                        key={`action-${index}`}
+                        component={Link}
+                        to={act.route}
+                        variant={
+                          act.color === "white" || act.color === "default"
+                            ? "contained"
+                            : "gradient"
+                        }
+                        color={act.color ? act.color : "info"}
+                        size="small"
+                      >
+                        {act.label}
+                      </MKButton>
+                    ) : (
+                      <MKButton
+                        sx={{ mx: 1 }}
+                        key={`action-${index}`}
+                        component="a"
+                        href={act.route}
+                        target="_blank"
+                        rel="noreferrer"
+                        variant={
+                          act.color === "white" || act.color === "default"
+                            ? "contained"
+                            : "gradient"
+                        }
+                        color={act.color ? act.color : "info"}
+                        size="small"
+                      >
+                        {act.label}
+                      </MKButton>
+                    )
+                  )
+                : action &&
+                  (action.type === "internal" ? (
                     <MKButton
-                      key={`action-${index}`}
+                      sx={{ mx: 1 }}
                       component={Link}
-                      to={act.route}
+                      to={action.route}
                       variant={
-                        act.color === "white" || act.color === "default" ? "contained" : "gradient"
+                        action.color === "white" || action.color === "default"
+                          ? "contained"
+                          : "gradient"
                       }
-                      color={act.color ? act.color : "info"}
+                      color={action.color ? action.color : "info"}
                       size="small"
                     >
-                      {act.label}
+                      {action.label}
                     </MKButton>
                   ) : (
                     <MKButton
-                      key={`action-${index}`}
+                      sx={{ mx: 1 }}
                       component="a"
-                      href={act.route}
+                      href={action.route}
                       target="_blank"
                       rel="noreferrer"
                       variant={
-                        act.color === "white" || act.color === "default" ? "contained" : "gradient"
+                        action.color === "white" || action.color === "default"
+                          ? "contained"
+                          : "gradient"
                       }
-                      color={act.color ? act.color : "info"}
+                      color={action.color ? action.color : "info"}
                       size="small"
                     >
-                      {act.label}
+                      {action.label}
                     </MKButton>
-                  )
-                )
-              : action &&
-                (action.type === "internal" ? (
-                  <MKButton
-                    component={Link}
-                    to={action.route}
-                    variant={
-                      action.color === "white" || action.color === "default"
-                        ? "contained"
-                        : "gradient"
-                    }
-                    color={action.color ? action.color : "info"}
-                    size="small"
-                  >
-                    {action.label}
-                  </MKButton>
-                ) : (
-                  <MKButton
-                    component="a"
-                    href={action.route}
-                    target="_blank"
-                    rel="noreferrer"
-                    variant={
-                      action.color === "white" || action.color === "default"
-                        ? "contained"
-                        : "gradient"
-                    }
-                    color={action.color ? action.color : "info"}
-                    size="small"
-                  >
-                    {action.label}
-                  </MKButton>
-                ))}
+                  ))}
+            </MKBox>
+            {autenticate.isAuthenticated && (
+              <MKBox display="flex" alignItems="center" gap={1}>
+                <MKTypography variant="button" fontWeight="bold" color={light ? "white" : "dark"}>
+                  {`Hola, ${userName}`}
+                </MKTypography>
+                <MKAvatar src={helpImg} alt={userName} size="sm" bgColor="info" />
+              </MKBox>
+            )}
           </MKBox>
 
           <MKBox
