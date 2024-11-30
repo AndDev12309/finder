@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // react-router-dom components
 import { Link, useNavigate } from "react-router-dom";
@@ -41,6 +41,51 @@ function SignInBasic() {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get("access_token");
+
+    if (accessToken) {
+      const provider = window.location.search.includes("id_token") ? "google" : "facebook";
+      handleLoginWithToken(accessToken, provider);
+    }
+  }, []);
+
+  const handleGoogleLogin = () => {
+    window.location.href = "https://finder-api-production.up.railway.app/api/connect/google";
+  };
+
+  const handleFacebookLogin = () => {
+    window.location.href = "https://finder-api-production.up.railway.app/api/connect/facebook";
+  };
+
+  const handleLoginWithToken = async (accessToken, provider) => {
+    try {
+      const callbackUrl = `/auth/${provider}/callback?access_token=${accessToken}`;
+      const responseLogin = await API.get(callbackUrl);
+
+      if (responseLogin.status === 200) {
+        API.headers["Authorization"] = "Bearer " + responseLogin.data.jwt;
+        try {
+          const responseUser = await API.get("/users/me");
+          if (responseUser.status === 200) {
+            localStorage.setItem("login", JSON.stringify(true));
+            Cookies.set("token", responseLogin.data.jwt, { expires: 1 });
+            API.headers["Authorization"] = "Bearer " + responseLogin.data.jwt;
+            setCurrentUser(responseLogin.data.user);
+            setAuthenticated(true);
+            setLoading(false);
+            navigate("/pets");
+          }
+        } catch (error) {
+          console.error("Error al obtener userInfo:", error);
+        }
+      }
+    } catch (error) {
+      console.error(`Error al autenticar con ${provider}:`, error);
+    }
+  };
+
   const login = async () => {
     if (username === "" || password === "") {
       return alert("Ingrese usaurio y contraseña");
@@ -55,7 +100,7 @@ function SignInBasic() {
       //localStorage.setItem('menu', JSON.stringify(response));
       Cookies.set("token", response.data.jwt, { expires: 1 });
       API.headers["Authorization"] = "Bearer " + response.data.jwt;
-      setCurrentUser(response.data.cliente);
+      setCurrentUser(response.data.user);
       setAuthenticated(true);
       setLoading(false);
       navigate("/pets");
@@ -127,7 +172,7 @@ function SignInBasic() {
                 <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
                   <Grid item xs={2}>
                     <MKTypography component={MuiLink} href="#" variant="body1" color="white">
-                      <FacebookIcon color="inherit" />
+                      <FacebookIcon onClick={handleFacebookLogin} color="inherit" />
                     </MKTypography>
                   </Grid>
                   <Grid item xs={2}>
@@ -137,7 +182,7 @@ function SignInBasic() {
                   </Grid>
                   <Grid item xs={2}>
                     <MKTypography component={MuiLink} href="#" variant="body1" color="white">
-                      <GoogleIcon color="inherit" />
+                      <GoogleIcon onClick={handleGoogleLogin} color="inherit" />
                     </MKTypography>
                   </Grid>
                 </Grid>
