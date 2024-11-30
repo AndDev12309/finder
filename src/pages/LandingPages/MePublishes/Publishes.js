@@ -45,7 +45,7 @@ function Publishes({ cardFounds = [], cardLosts = [] }) {
                         ? `${card.species}, ${card.breed}, ${card.age} años`
                         : `${card.breed}, ${card.color}`
                     }
-                    color="info"
+                    color={card.publishedAt ? "success" : "warning"}
                   />
                   <RotatingCardBack
                     image={backImage}
@@ -54,7 +54,7 @@ function Publishes({ cardFounds = [], cardLosts = [] }) {
                     color={"info"}
                     action={{
                       type: "internal",
-                      route: isLost ? `/lost/${card.documentId}` : `/found/${card.documentId}`,
+                      route: isLost ? `/lost/${card.id}` : `/found/${card.id}`,
                       label: "Ver detalles",
                     }}
                   />
@@ -72,7 +72,6 @@ Publishes.propTypes = {
   cardFounds: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      documentId: PropTypes.string.isRequired,
       species: PropTypes.string.isRequired,
       breed: PropTypes.string,
       color: PropTypes.string,
@@ -94,12 +93,12 @@ Publishes.propTypes = {
     PropTypes.shape({
       id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
-      documentId: PropTypes.string.isRequired,
       species: PropTypes.string.isRequired,
       breed: PropTypes.string,
       age: PropTypes.number,
       description: PropTypes.string,
       last_seen_location: PropTypes.string,
+      publishedAt: PropTypes.string,
       photos: PropTypes.arrayOf(
         PropTypes.shape({
           formats: PropTypes.shape({

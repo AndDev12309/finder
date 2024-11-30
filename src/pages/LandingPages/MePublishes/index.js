@@ -54,6 +54,7 @@ function MePublishes() {
       }),
       user: autenticate.currentUser.id,
     },
+    publicationState: "preview",
     sort: "date_reported:desc",
   });
 
@@ -71,6 +72,7 @@ function MePublishes() {
       }),
       user: autenticate.currentUser.id,
     },
+    publicationState: "preview",
     sort: "createdAt:desc",
   });
 

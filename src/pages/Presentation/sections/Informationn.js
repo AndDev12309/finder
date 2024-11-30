@@ -50,7 +50,7 @@ function Informationn({ cardFounds }) {
                     description={found.description}
                     action={{
                       type: "internal",
-                      route: `/found/${found.documentId}`,
+                      route: `/found/${found.id}`,
                       label: "Ver detalles",
                     }}
                   />
@@ -67,7 +67,7 @@ Informationn.propTypes = {
   cardFounds: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      documentId: PropTypes.string,
+
       species: PropTypes.string.isRequired,
       breed: PropTypes.string,
       color: PropTypes.string,
@@ -80,7 +80,6 @@ Informationn.propTypes = {
       photos: PropTypes.arrayOf(
         PropTypes.shape({
           id: PropTypes.number,
-          documentId: PropTypes.string,
           name: PropTypes.string,
           alternativeText: PropTypes.string,
           caption: PropTypes.string,

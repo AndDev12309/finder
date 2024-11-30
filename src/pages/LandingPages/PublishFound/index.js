@@ -74,10 +74,11 @@ const FoundForm = ({ item }) => {
           date_found: data.date_found,
           photos: photoIds,
           user: autenticate.currentUser.id,
+          publishedAt: null,
         },
       };
       const response = item
-        ? await API.put(`/founds/${item.documentId}`, requestData)
+        ? await API.put(`/founds/${item.id}`, requestData)
         : await API.post("/founds", requestData);
 
       // const response = await API.post("/founds", {
@@ -404,7 +405,6 @@ const FoundForm = ({ item }) => {
 FoundForm.propTypes = {
   item: PropTypes.shape({
     id: PropTypes.number,
-    documentId: PropTypes.string,
     species: PropTypes.string,
     breed: PropTypes.string,
     color: PropTypes.string,

@@ -48,15 +48,38 @@ function DetailsPage({ item, type }) {
 
   const handleSendEmail = async (data) => {
     console.log("Enviando correo con los datos:", data);
-    alert("Correo enviado con éxito.");
+    if (!item || !item.user || !item.user.data) {
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append("replyTo", data.email);
+      formData.append("subject", data.subject);
+      formData.append("text", data.message);
+      formData.append("html", data.message);
+
+      if (data.files.length > 0) {
+        data.files.forEach((file) => {
+          formData.append("files", file);
+        });
+      }
+
+      const response = await API.post("/email/send-email", formData);
+      if (response.status === 200) {
+        alert("Correo enviado exitosamente");
+      } else {
+        console.error("Error al enviar el correo");
+      }
+    } catch (error) {
+      alert(error.response?.data?.error?.message || "Error al enviar el correo");
+    }
   };
 
   const handleMarkAsRescued = async () => {
     try {
-      const response = await API.put(
-        item.name ? `/losts/${item.documentId}` : `/founds/${item.documentId}`,
-        { data: { state: "Rescued" } }
-      );
+      const response = await API.put(item.name ? `/losts/${item.id}` : `/founds/${item.id}`, {
+        data: { state: "Rescued" },
+      });
       if (response.status === 200 || response.status === 201) {
         setIsRescued(true);
       } else {
@@ -69,31 +92,46 @@ function DetailsPage({ item, type }) {
   };
 
   const handleEdit = () => {
-    return navigate(`/edit-lost/${item.documentId}`);
+    return navigate(`/edit-lost/${item.id}`);
   };
 
   const isLost = type === "lost";
 
   return (
     <>
-      <DefaultNavbar
-        routes={routesPrivate}
-        action={[
-          {
-            type: "internal",
-            route: "/me-publishes",
-            label: "Mis publicaciones",
-            color: "primary",
-          },
-          {
-            type: "internal",
-            route: "/logout",
-            label: "Cerrar Sesion",
-            color: "info",
-          },
-        ]}
-        sticky
-      />
+      {autenticate.isAuthenticated ? (
+        <DefaultNavbar
+          routes={routesPrivate}
+          action={[
+            {
+              type: "internal",
+              route: "/me-publishes",
+              label: "Mis publicaciones",
+              color: "primary",
+            },
+            {
+              type: "internal",
+              route: "/logout",
+              label: "Cerrar Sesion",
+              color: "info",
+            },
+          ]}
+          sticky
+        />
+      ) : (
+        <DefaultNavbar
+          routes={routesPrivate}
+          action={[
+            {
+              type: "internal",
+              route: "/logout",
+              label: "Cerrar Sesion",
+              color: "info",
+            },
+          ]}
+          sticky
+        />
+      )}
       <MKBox
         minHeight="75vh"
         width="100%"
@@ -158,9 +196,20 @@ function DetailsPage({ item, type }) {
                 </Slider>
               </Box>
               <CardContent>
-                <Typography variant="h4" gutterBottom>
-                  {item.name || (isLost ? "Sin Nombre" : "Sin Identificación")}
-                </Typography>
+                <MKBox>
+                  <Typography variant="h4" gutterBottom>
+                    {isLost ? "Familiar" : "Responsable"}
+                  </Typography>
+                  <MKBox>
+                    <Typography variant="h4" gutterBottom>
+                      {item.user
+                        ? item.user?.data?.attributes.username +
+                          ` / ` +
+                          item.user?.data?.attributes.email
+                        : "Sin Responsable"}
+                    </Typography>
+                  </MKBox>
+                </MKBox>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body1">
@@ -223,16 +272,21 @@ function DetailsPage({ item, type }) {
                     justifyContent: "center",
                   }}
                 >
-                  {autenticate.isAuthenticated && item.state !== "Rescued" && !isRescued && (
-                    <>
-                      <MKButton variant="contained" color="success" onClick={handleMarkAsRescued}>
-                        Marcar como Rescatado
-                      </MKButton>
-                      <MKButton variant="gradient" color="info" onClick={handleEdit}>
-                        Editar
-                      </MKButton>
-                    </>
-                  )}
+                  {autenticate.isAuthenticated &&
+                    item.state !== "Rescued" &&
+                    !isRescued &&
+                    item.user &&
+                    item.user.data &&
+                    autenticate.currentUser.id === item.user.data.id && (
+                      <>
+                        <MKButton variant="contained" color="success" onClick={handleMarkAsRescued}>
+                          Marcar como Rescatado
+                        </MKButton>
+                        <MKButton variant="gradient" color="info" onClick={handleEdit}>
+                          Editar
+                        </MKButton>
+                      </>
+                    )}
                   <MKButton
                     variant="gradient"
                     color="info"
@@ -241,15 +295,17 @@ function DetailsPage({ item, type }) {
                   >
                     Volver a la lista
                   </MKButton>
-                  {!autenticate.isAuthenticated && (
-                    <MKButton
-                      variant="contained"
-                      color="success"
-                      onClick={() => setContactModalOpen(true)}
-                    >
-                      Contactar
-                    </MKButton>
-                  )}
+                  {item.state !== "Rescued" &&
+                    !isRescued &&
+                    autenticate?.currentUser?.id !== item.user?.data?.id && (
+                      <MKButton
+                        variant="contained"
+                        color="success"
+                        onClick={() => setContactModalOpen(true)}
+                      >
+                        Contactar
+                      </MKButton>
+                    )}
                 </Box>
               </CardContent>
             </Card>
@@ -269,7 +325,6 @@ function DetailsPage({ item, type }) {
 DetailsPage.propTypes = {
   item: PropTypes.shape({
     id: PropTypes.number,
-    documentId: PropTypes.string,
     name: PropTypes.string,
     species: PropTypes.string,
     breed: PropTypes.string,
@@ -292,6 +347,15 @@ DetailsPage.propTypes = {
         url: PropTypes.string,
       })
     ),
+    user: PropTypes.shape({
+      data: PropTypes.shape({
+        id: PropTypes.number,
+        attributes: PropTypes.shape({
+          username: PropTypes.string,
+          email: PropTypes.string,
+        }),
+      }),
+    }),
   }).isRequired,
   type: PropTypes.oneOf(["lost", "found"]),
 };

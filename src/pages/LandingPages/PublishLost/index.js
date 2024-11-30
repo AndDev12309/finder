@@ -74,11 +74,12 @@ const LostForm = ({ item }) => {
           last_seen_location: data.last_seen_location,
           date_reported: data.date_reported,
           photos: photoIds,
+          publishedAt: null,
           user: autenticate.currentUser.id,
         },
       };
       const response = item
-        ? await API.put(`/losts/${item.documentId}`, requestData) // Actualizar si existe el `item`
+        ? await API.put(`/losts/${item.id}`, requestData) // Actualizar si existe el `item`
         : await API.post("/losts", requestData);
 
       // const response = await API.post("/losts", {
@@ -448,7 +449,7 @@ const LostForm = ({ item }) => {
 LostForm.propTypes = {
   item: PropTypes.shape({
     id: PropTypes.number,
-    documentId: PropTypes.string,
+    
     name: PropTypes.string,
     species: PropTypes.string,
     breed: PropTypes.string,

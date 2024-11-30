@@ -37,9 +37,9 @@ function Contact({ open, onClose, onSend }) {
       const payload = {
         ...data,
         message: editorContent,
-        files: files, // Incluye el contenido del editor
+        files: files,
       };
-      await onSend(payload); // Aquí llamamos a la función pasada por prop para enviar el correo
+      await onSend(payload);
       reset();
       onClose();
     } catch (error) {

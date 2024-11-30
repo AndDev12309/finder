@@ -51,7 +51,7 @@ function Information({ cardLosts }) {
                     description={lost.description}
                     action={{
                       type: "internal",
-                      route: `/lost/${lost.documentId}`,
+                      route: `/lost/${lost.id}`,
                       label: "Ver detalles",
                     }}
                   />
@@ -68,7 +68,7 @@ Information.propTypes = {
   cardLosts: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      documentId: PropTypes.string,
+
       name: PropTypes.string.isRequired,
       species: PropTypes.string.isRequired,
       breed: PropTypes.string,
@@ -84,7 +84,6 @@ Information.propTypes = {
       photos: PropTypes.arrayOf(
         PropTypes.shape({
           id: PropTypes.number,
-          documentId: PropTypes.string,
           name: PropTypes.string,
           alternativeText: PropTypes.string,
           caption: PropTypes.string,
