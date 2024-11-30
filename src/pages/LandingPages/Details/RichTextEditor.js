@@ -170,13 +170,8 @@ function RichTextEditor({ onContentChange, onFilesChange }) {
 }
 
 RichTextEditor.propTypes = {
-  value: PropTypes.string,
   onContentChange: PropTypes.func.isRequired,
   onFilesChange: PropTypes.func.isRequired,
-};
-
-RichTextEditor.defaultProps = {
-  value: "",
 };
 
 export default RichTextEditor;
