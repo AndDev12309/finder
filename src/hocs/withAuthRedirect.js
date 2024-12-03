@@ -16,7 +16,6 @@ export default function withAuthRedirect({
       return <LoadingComponent />;
     }
     if (expectedAuth !== isAuthenticated) {
-      console.log("wntros");
       return <Navigate to={location || Routes.LOGIN} state={{ from: props.location }} replace />;
     }
     return <WrappedComponent {...props} />;
