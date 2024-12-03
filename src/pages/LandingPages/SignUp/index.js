@@ -39,12 +39,13 @@ function SignUpBasic() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    const { username, email, password } = data;
+    const { username, email, password, phone } = data;
 
     try {
       const response = await API.post("/auth/local/register", {
         username: username.trim(),
         email: email.trim(),
+        phone: phone.trim(),
         password: password.trim(),
       });
 
