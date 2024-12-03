@@ -26,7 +26,6 @@ const handleRequest = async (endpoint, method, params = null) => {
   }
 
   requestData["headers"] = headers;
-  console.log("requestData", requestData);
   const response = await fetch(`${baseURL}${endpoint}`, requestData);
   let jsonResponse = {};
 
@@ -34,9 +33,7 @@ const handleRequest = async (endpoint, method, params = null) => {
     jsonResponse = await response.json();
 
     if (response.status === 401) {
-      console.log("STATUS 401", jsonResponse);
       if (jsonResponse.refreshed_token) {
-        console.log("jsonResponse.refreshed_token", jsonResponse.refreshed_token);
         API.headers["Authorization"] = "Bearer " + jsonResponse.refreshed_token;
         return await handleRequest(endpoint, method, params);
       } else {
@@ -49,7 +46,7 @@ const handleRequest = async (endpoint, method, params = null) => {
       }
     }
   } catch (e) {
-    console.log("NO BODY", JSON.stringify(e));
+    console.error("NO BODY", JSON.stringify(e));
   }
 
   if (!response.ok) {

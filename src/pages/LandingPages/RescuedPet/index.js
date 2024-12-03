@@ -7,7 +7,6 @@ const CelebrationConfetti = ({ isRescued }) => {
   const [showConfetti, setShowConfetti] = useState(isRescued);
 
   useEffect(() => {
-    console.log("ress"), isRescued;
     if (isRescued) {
       const timer = setTimeout(() => {
         setShowConfetti(false);

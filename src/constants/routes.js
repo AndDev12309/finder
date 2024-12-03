@@ -1,18 +1,11 @@
 const publicRoutes = {
   LOGIN: "/sign-in",
-  REGISTER: "/registro",
-  ARTICLES: "/articulos",
-  USERS: "/usuarios",
-  USERS_ID: `/usuario/:id`,
+  REGISTER: "/sign-up",
   HOME: "/",
-  ABOUT: "/acerca-de",
-  ANTD: "/antd",
 };
 
 const privateRoutes = {
   LOGOUT: "/logout",
-  PRIVATE: "/privada",
-  ARTICLE_ID: "/articulo/:id",
 };
 
 const Routes = {
