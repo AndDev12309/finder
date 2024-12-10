@@ -8,7 +8,7 @@ import Contact from "pages/LandingPages/Details/Contact";
 import PropTypes from "prop-types";
 import { useAuth } from "providers/Auth";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import { routesPrivate } from "routes";
 import "slick-carousel/slick/slick-theme.css";
@@ -106,6 +106,10 @@ function DetailsPage({ item, type }) {
   };
 
   const isLost = type === "lost";
+
+  const volver = () => {
+    navigate(-1);
+  };
 
   return (
     <>
@@ -331,12 +335,7 @@ function DetailsPage({ item, type }) {
                         </MKButton>
                       </>
                     )}
-                  <MKButton
-                    variant="gradient"
-                    color="info"
-                    component={Link}
-                    to={item ? "/me-publishes" : `/${type}s`}
-                  >
+                  <MKButton variant="gradient" color="info" onClick={volver}>
                     Volver a la lista
                   </MKButton>
                   {item.attributes.state !== "Rescued" &&
