@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 export default function PublishhPage() {
   const { id } = useParams();
   const [idFound, setIdFound] = useState(null);
-  const found = useFound(setIdFound, {
+  const found = useFound(idFound, {
     populate: { photos: true },
   });
 
