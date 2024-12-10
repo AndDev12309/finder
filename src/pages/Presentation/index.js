@@ -192,7 +192,7 @@ function Presentation() {
         />
       ) : (
         <DefaultNavbar
-          routes={routesPublic}
+          routes={routesPrivate}
           action={{
             type: "internal",
             route: "/sign-in",
