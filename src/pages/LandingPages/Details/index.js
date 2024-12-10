@@ -135,7 +135,7 @@ function DetailsPage({ item, type }) {
         />
       ) : (
         <DefaultNavbar
-          routes={routesPublic}
+          routes={routesPrivate}
           action={[
             {
               type: "internal",
