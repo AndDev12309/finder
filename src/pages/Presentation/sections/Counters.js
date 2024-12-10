@@ -16,29 +16,15 @@ function Counters({ lost, found, rescued }) {
       <Container>
         <Grid container item xs={12} lg={9} sx={{ mx: "auto" }}>
           <Grid item xs={12} md={4}>
-            <DefaultCounterCard
-              count={lost}
-              suffix="+"
-              title="Mascotas Perdidas"
-              description="From buttons, to inputs, navbars, alerts or cards, you are covered"
-            />
+            <DefaultCounterCard count={lost} suffix="+" title="Mascotas Perdidas" />
           </Grid>
           <Grid item xs={12} md={4} display="flex">
             <Divider orientation="vertical" sx={{ display: { xs: "none", md: "block" }, mx: 0 }} />
-            <DefaultCounterCard
-              count={found}
-              suffix="+"
-              title="Mascotas Encontradas"
-              description="Mix the sections, change the colors and unleash your creativity"
-            />
+            <DefaultCounterCard count={found} suffix="+" title="Mascotas Encontradas" />
             <Divider orientation="vertical" sx={{ display: { xs: "none", md: "block" }, ml: 0 }} />
           </Grid>
           <Grid item xs={12} md={4}>
-            <DefaultCounterCard
-              count={rescued}
-              title="Mascotas Rescatadas"
-              description="Save 3-4 weeks of work when you use our pre-made pages for your website"
-            />
+            <DefaultCounterCard count={rescued} title="Mascotas Rescatadas" />
           </Grid>
         </Grid>
       </Container>
