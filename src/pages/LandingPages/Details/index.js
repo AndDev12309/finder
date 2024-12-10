@@ -14,7 +14,6 @@ import { routesPrivate } from "routes";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import CelebrationConfetti from "../RescuedPet";
-import { routesPublic } from "routes";
 
 function DetailsPage({ item, type }) {
   const autenticate = useAuth();

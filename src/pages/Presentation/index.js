@@ -35,7 +35,7 @@ import { useEffect, useState } from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import { useAuth } from "providers/Auth";
-import { routesPrivate, routesPublic } from "routes";
+import { routesPrivate } from "routes";
 import Header from "./sections/Header";
 
 function Presentation() {
