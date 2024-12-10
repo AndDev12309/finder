@@ -101,7 +101,7 @@ const LostForm = ({ item }) => {
       //   },
       // });
       if (response.status === 200 || response.status === 201) {
-        return navigate("/");
+        return navigate("/me-publishes");
       }
     } catch (e) {
       alert("Por favor intente en unos minutos");
