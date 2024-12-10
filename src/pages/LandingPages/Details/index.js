@@ -102,7 +102,7 @@ function DetailsPage({ item, type }) {
   };
 
   const handleEdit = () => {
-    return navigate(`/edit-lost/${item.id}`);
+    return navigate(`/edit-${type}/${item.id}`);
   };
 
   const isLost = type === "lost";
