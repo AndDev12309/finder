@@ -51,13 +51,13 @@ function SignInBasic() {
     }
   }, []);
 
-  const handleGoogleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_API_HOST_CLOUD}/connect/google`;
-  };
+  // const handleGoogleLogin = () => {
+  //   window.location.href = `${process.env.REACT_APP_API_HOST_CLOUD}/connect/google`;
+  // };
 
-  const handleFacebookLogin = () => {
-    window.location.href = `${process.env.REACT_APP_API_HOST_CLOUD}/connect/facebook`;
-  };
+  // const handleFacebookLogin = () => {
+  //   window.location.href = `${process.env.REACT_APP_API_HOST_CLOUD}/connect/facebook`;
+  // };
 
   const handleLoginWithToken = async (accessToken, provider) => {
     try {
