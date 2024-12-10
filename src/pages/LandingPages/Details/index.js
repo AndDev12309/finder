@@ -335,7 +335,7 @@ function DetailsPage({ item, type }) {
                     variant="gradient"
                     color="info"
                     component={Link}
-                    to={item ? "/me-publishes" : `/${type}s`}
+                    to={item && autenticate?.currentUser ? "/me-publishes" : "/pets"}
                   >
                     Volver a la lista
                   </MKButton>

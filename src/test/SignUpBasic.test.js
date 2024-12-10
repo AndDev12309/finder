@@ -24,7 +24,7 @@ const renderWithTheme = (component) => {
 };
 
 describe("Test componente de registro", () => {
-  it("REGITRO DE USUARIO testuser", async () => {
+  it("REGISTRO DE USUARIO testuser", async () => {
     fetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({
@@ -70,7 +70,7 @@ describe("Test componente de registro", () => {
     );
   });
 
-  it("shows an error if the API request fails", async () => {
+  it("REGISTRO DE USUARIO FALLIDO CON RESPUESTA DE LA API", async () => {
     fetch.mockResolvedValueOnce({
       ok: false,
       status: 400,

@@ -52,11 +52,11 @@ function SignInBasic() {
   }, []);
 
   const handleGoogleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_API_HOST}/connect/google`;
+    window.location.href = `${process.env.REACT_APP_API_HOST_CLOUD}/connect/google`;
   };
 
   const handleFacebookLogin = () => {
-    window.location.href = `${process.env.REACT_APP_API_HOST}/connect/facebook`;
+    window.location.href = `${process.env.REACT_APP_API_HOST_CLOUD}/connect/facebook`;
   };
 
   const handleLoginWithToken = async (accessToken, provider) => {
@@ -172,7 +172,7 @@ function SignInBasic() {
                 <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
                   <Grid item xs={2}>
                     <MKTypography component={MuiLink} href="#" variant="body1" color="white">
-                      <FacebookIcon onClick={handleFacebookLogin} color="inherit" />
+                      <FacebookIcon color="inherit" />
                     </MKTypography>
                   </Grid>
                   <Grid item xs={2}>
@@ -182,7 +182,7 @@ function SignInBasic() {
                   </Grid>
                   <Grid item xs={2}>
                     <MKTypography component={MuiLink} href="#" variant="body1" color="white">
-                      <GoogleIcon onClick={handleGoogleLogin} color="inherit" />
+                      <GoogleIcon color="inherit" />
                     </MKTypography>
                   </Grid>
                 </Grid>
